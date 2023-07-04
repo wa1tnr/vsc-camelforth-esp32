@@ -3,11 +3,11 @@
  *  forth.c
  * DESCRIPTION
  *  Interactive Forth interpreter written in C.
- *  Allows C routines to be executed, and data to be examined, 
+ *  Allows C routines to be executed, and data to be examined,
  *  from a command line interface.
  * NOTES
  *  Ref. Norman E. Smith, "Write Your Own Programming Language
- *  Using C++", although the implementation here is entirely 
+ *  Using C++", although the implementation here is entirely
  *  different.
  * AUTHOR
  *  Brad Rodriguez
@@ -18,23 +18,23 @@
  *  14 feb 2016 bjr - first implementation
  ******
  * LICENSE TERMS
- *  CamelForth in C 
+ *  CamelForth in C
  *  copyright (c) 2016,2017 Bradford J. Rodriguez.
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *  
- *  Commercial inquiries should be directed to the author at 
+ *
+ *  Commercial inquiries should be directed to the author at
  *  115 First St., #105, Collingwood, Ontario L9Y 4W3 Canada
  *  or via email to bj@camelforth.com
  */
@@ -73,7 +73,7 @@ unsigned char ROMDICT[1024];
 #endif
 
 
-/* 
+/*
  * RUN-TIME FUNCTIONS FOR DEFINED WORDS
  */
 
@@ -113,9 +113,9 @@ void Fdocreate (void * pfa) {
 }
 
 
-/* FIG-Forth style <BUILDS..DOES> 
+/* FIG-Forth style <BUILDS..DOES>
  * Defined (child) word is  [Fdobuilds] [Tdoesword] [...data...]
- * i.e., the second cell of the code field is the xt of the 
+ * i.e., the second cell of the code field is the xt of the
  * Forth word to be executed, that implements the DOES> action */
 
 void Fdobuilds (void * pfa) {
@@ -125,14 +125,14 @@ void Fdobuilds (void * pfa) {
         w = *(void **)pfa;      /* fetch word address from param field */
         pfa += CELL;
         *--psp = (unsigned int)pfa; /* push address of following data */
-            
+
         x = *(void **)w;        /* fetch function adrs from word def */
         xt = (void (*)())x;     /* too much casting! */
         w += CELL;
         (*xt)(w);               /* call function w/adrs of word def */
 }
 
-/* 
+/*
  * PRIMITIVE FUNCTIONS
  */
 
@@ -143,7 +143,7 @@ CODE(exit) {
 CODE(execute) {
     void (*xt)(void *);     /* pointer to code function */
     void *w, *x;            /* generic pointers */
-    
+
         w = *(void **)psp;      /* fetch word address from stack */
         psp++;
         x = *(void **)w;        /* fetch function adrs from word def */
@@ -155,7 +155,7 @@ CODE(execute) {
 CODE(lit) {
     *--psp = *(unsigned int*)ip;     /* fetch inline value */
     ip += CELL;
-}    
+}
 
 /* STACK OPERATIONS */
 
@@ -275,7 +275,7 @@ CODE(plusstore) {
     unsigned int *ptr;
     ptr = (unsigned int*)(*psp++);
     *ptr += *psp++;
-}    
+}
 
 CODE(mplus) {
     uint64_t d;
@@ -311,12 +311,12 @@ CODE(and) {
     psp[1] &= psp[0];
     psp++;
 }
-    
+
 CODE(or) {
     psp[1] |= psp[0];
     psp++;
 }
-    
+
 CODE(xor) {
     psp[1] ^= psp[0];
     psp++;
@@ -415,7 +415,7 @@ CODE(branch) {     /* Tbranch,-4  loops back to itself */
 }
 
 CODE(qbranch) {    /* Tbranch,-4  loops back to itself */
-    int offset;                 
+    int offset;
     if (*psp++ == 0) {
         offset = *(unsigned int*)ip;     /* fetch inline offset */
         ip += offset;
@@ -425,10 +425,10 @@ CODE(qbranch) {    /* Tbranch,-4  loops back to itself */
 }
 
 /* '83 and ANSI standard +LOOP behavior:  (per dpans-6)
- * "Add n to the loop index. If the loop index did not cross the boundary 
- * between the loop limit minus one and the loop limit, continue execution 
- * at the beginning of the loop. Otherwise, discard the current loop 
- * control parameters and continue execution immediately following the 
+ * "Add n to the loop index. If the loop index did not cross the boundary
+ * between the loop limit minus one and the loop limit, continue execution
+ * at the beginning of the loop. Otherwise, discard the current loop
+ * control parameters and continue execution immediately following the
  * loop."
  * rsp[0] = index, rsp[1] = limit */
 
@@ -443,11 +443,11 @@ CODE(xplusloop) {   /* n -- */
     if (CIRCULARGE(rsp[0],rsp[1]) != f) { // have we crossed the boundary?
         rsp += 2;                           // yes: drop index, limit
         ip += CELL;                         // and exit loop
-    } else {                            
-        offset = *(unsigned int*)ip;        // no: branch 
+    } else {
+        offset = *(unsigned int*)ip;        // no: branch
         ip += offset;
     }
-}        
+}
 
 CODE(xloop) {
     int offset;
@@ -455,26 +455,26 @@ CODE(xloop) {
     if (rsp[0] == rsp[1]) {             // have we reached the limit?
         rsp += 2;                           // yes: drop index, limit
         ip += CELL;                         // and exit loop
-    } else {                            
-        offset = *(unsigned int*)ip;        // no: branch 
+    } else {
+        offset = *(unsigned int*)ip;        // no: branch
         ip += offset;
     }
-}        
+}
 
 CODE(xdo) {     /* limit start -- */
     *--rsp = psp[1];        // push limit
     *--rsp = *psp++;        // push starting index
     psp++;
 }
-    
+
 CODE(i) {
-    *--psp = rsp[0];        // first loop index 
+    *--psp = rsp[0];        // first loop index
 }
 
 CODE(j) {
     *--psp = rsp[2];        // second loop index
 }
-    
+
 CODE(unloop) {
     rsp += 2;
 }
@@ -486,8 +486,8 @@ CODE(umstar) {  /* u1 u2 -- ud */
     ud = (uint64_t)psp[0] * (uint64_t)psp[1];
     psp[1] = ud & (uint64_t)0xffffffff;
     psp[0] = ud >> 32;
-}    
-    
+}
+
 CODE(umslashmod) {  /* ud u1 -- rem quot */
     uint64_t ud, u1;
     u1 = *psp++;
@@ -495,7 +495,7 @@ CODE(umslashmod) {  /* ud u1 -- rem quot */
     psp[1] = (unsigned int)(ud % u1);
     psp[0] = (unsigned int)(ud / u1);
 }
- 
+
 /* BLOCK AND STRING OPERATIONS */
 
 CODE(fill) {    /* c-addr u char -- */
@@ -579,7 +579,7 @@ CODE(emit) {
 }
 
 CODE(keyq) {
-    *--psp = getquery(); 
+    *--psp = getquery();
 }
 
 CODE(dot) {        /* temporary definition for testing */
@@ -610,7 +610,7 @@ CODE(dump) {   /* adr n -- */
         if ((i&0xf)==0) printf("\n%8x:", (unsigned int)p);
         printf(" %02x", *p++);
     }
-}       
+}
 
 CODE(bye) {
     run = 0;
@@ -700,7 +700,7 @@ PRIMITIVE(skip);
 PRIMITIVE(scan);
 PRIMITIVE(sequal);
 THREAD(nequal) = { Fsequal };  /* synonym */
-    
+
 PRIMITIVE(key);
 PRIMITIVE(emit);
 PRIMITIVE(keyq);
@@ -727,7 +727,7 @@ THREAD(newest) = { Fdouser, LIT(11) };
 
 extern const struct Header Hcold;
 
-THREAD(uinit) = { Fdorom, 
+THREAD(uinit) = { Fdorom,
     LIT(0),  LIT(0),  LIT(10), LIT(0),  // u0 >in base state
     RAMDICT, LIT(0),  LIT(0),  Hcold.nfa,    // dp source latest
     LIT(0),  LIT(0),  ROMDICT, LIT(0) };  // hp lp idp newest
@@ -789,7 +789,7 @@ THREAD(charplus) = { Fenter, Tone, Tplus, Texit };
 /* >BODY is entered with CFA on stack.  For most words, body is
  * CFA + 1 cell.  For words built with CREATE or CREATE..DOES> ,
  * body is CFA + 2 cells. */
-THREAD(tobody) = { Fenter, 
+THREAD(tobody) = { Fenter,
     Tdup, Tifetch,                      /* fetch code field */
     Tdup, Tlit, Fdocreate, Tequal,      /* if it's Fdocreate */
     Tswap, Tlit, Fdobuilds, Tequal, Tor,  /* or Fdobuilds */
@@ -801,7 +801,7 @@ THREAD(storecf) = { Fenter, Tistore, Texit };
 THREAD(commacf) = { Fenter, Tihere, Tstorecf, Tcell, Tiallot, Texit };
 THREAD(commaexit) = { Fenter, Tlit, Texit, Tcommaxt, Texit };
 
-    /* the c model uses relative addressing from the location of the 
+    /* the c model uses relative addressing from the location of the
      * offset cell */
 THREAD(commabranch) = { Fenter, Ticomma, Texit };
 THREAD(commadest) = { Fenter, Tihere, Tminus, Ticomma, Texit };
@@ -821,24 +821,24 @@ THREAD(twoover) = { Fenter, Ttor, Ttor, Ttwodup, Trfrom, Trfrom,
 /* ARITHMETIC OPERATORS */
 
 THREAD(stod) = { Fenter, Tdup, Tzeroless, Texit };
-THREAD(qnegate) = { Fenter, Tzeroless, 
+THREAD(qnegate) = { Fenter, Tzeroless,
                     Tqbranch, OFFSET(2), Tnegate, Texit };
 THREAD(abs) = { Fenter, Tdup, Tqnegate, Texit };
-THREAD(dnegate) = { Fenter, Tswap, Tinvert, Tswap, Tinvert, 
+THREAD(dnegate) = { Fenter, Tswap, Tinvert, Tswap, Tinvert,
                     Tone, Tmplus, Texit };
-THREAD(qdnegate) = { Fenter, Tzeroless, 
+THREAD(qdnegate) = { Fenter, Tzeroless,
                     Tqbranch, OFFSET(2), Tdnegate, Texit };
 THREAD(dabs) = { Fenter, Tdup, Tqdnegate, Texit };
 
 THREAD(mstar) = { Fenter, Ttwodup, Txor, Ttor,
                     Tswap, Tabs, Tswap, Tabs, Tumstar,
-                    Trfrom, Tqdnegate, Texit }; 
+                    Trfrom, Tqdnegate, Texit };
 THREAD(smslashrem) = { Fenter, Ttwodup, Txor, Ttor, Tover, Ttor,
                     Tabs, Ttor, Tdabs, Trfrom, Tumslashmod, Tswap,
                     Trfrom, Tqnegate, Tswap, Trfrom, Tqnegate, Texit };
 THREAD(fmslashmod) = { Fenter, Tdup, Ttor, Ttwodup, Txor, Ttor, Ttor,
                     Tdabs, Trfetch, Tabs, Tumslashmod,
-                    Tswap, Trfrom, Tqnegate, Tswap, Trfrom, Tzeroless, 
+                    Tswap, Trfrom, Tqnegate, Tswap, Trfrom, Tzeroless,
                     Tqbranch, OFFSET(10),
                     Tnegate, Tover, Tqbranch, OFFSET(6),
                     Trfetch, Trot, Tminus, Tswap, Toneminus,
@@ -861,7 +861,7 @@ THREAD(umin) = { Fenter, Ttwodup, Tugreater, Tqbranch, OFFSET(2), Tswap,
 /* CPU DEPENDENCIES CONT'D. */
 
 THREAD(cells) = { Fenter, Tcell, Tstar, Texit };
-THREAD(storecolon) = { Fenter, Ttwo, Tcells, Tnegate, Tiallot, 
+THREAD(storecolon) = { Fenter, Ttwo, Tcells, Tnegate, Tiallot,
                       Tlit, Fenter, Tcommacf, Texit };
 
 /* INPUT/OUTPUT */
@@ -882,11 +882,11 @@ THREAD(spaces) = { Fenter, Tdup, Tqbranch, OFFSET(5), Tspace, Toneminus,
 #define BACKSPACE 8         /* key returned for backspace */
 #define BACKUP  8           /* what to emit for backspace */
 #endif
-                
+
 THREAD(accept) = { Fenter, Tover, Tplus, Toneminus, Tover,
 /* 1 */  Tkey, Tdup, Tlit, LIT(NEWLINE), Tnotequal, Tqbranch, OFFSET(27 /*5*/),
          Tdup, Tlit, LIT(BACKSPACE), Tequal, Tqbranch, OFFSET(12 /*3*/),
-         Tdrop, Tlit, LIT(BACKUP), Temit, Toneminus, Ttor, Tover, Trfrom, 
+         Tdrop, Tlit, LIT(BACKUP), Temit, Toneminus, Ttor, Tover, Trfrom,
          Tumax, Tbranch, OFFSET(8 /*4*/),
 /* 3 */  Tdup, Temit, Tover, Tcstore, Toneplus, Tover, Tumin,
 /* 4 */  Tbranch, OFFSET(-32 /*1*/),
@@ -908,7 +908,7 @@ THREAD(udslashmod) = { Fenter, Ttor, Tzero, Trfetch, Tumslashmod, Trot, Trot,
          Trfrom, Tumslashmod, Trot, Texit };
 THREAD(udstar) = { Fenter, Tdup, Ttor, Tumstar, Tdrop,
          Tswap, Trfrom, Tumstar, Trot, Tplus, Texit };
-         
+
 THREAD(hold) = { Fenter, Tminusone, Thp, Tplusstore,
                 Thp, Tfetch, Tcstore, Texit };
 THREAD(lessnum) = { Fenter, Tlit, &holdarea[HOLDSIZE-1], Thp, Tstore, Texit };
@@ -918,9 +918,9 @@ THREAD(num) = { Fenter, Tbase, Tfetch, Tudslashmod, Trot, Ttodigit,
                 Thold, Texit };
 THREAD(nums) = { Fenter, Tnum, Ttwodup, Tor, Tzeroequal, Tqbranch, OFFSET(-5),
                 Texit };
-THREAD(numgreater) = { Fenter, Ttwodrop, Thp, Tfetch, 
+THREAD(numgreater) = { Fenter, Ttwodrop, Thp, Tfetch,
                 Tlit, &holdarea[HOLDSIZE-1], Tover, Tminus, Texit };
-THREAD(sign) = { Fenter, Tzeroless, Tqbranch, OFFSET(4), Tlit, LIT(0x2d), 
+THREAD(sign) = { Fenter, Tzeroless, Tqbranch, OFFSET(4), Tlit, LIT(0x2d),
                 Thold, Texit };
 THREAD(udot) = { Fenter, Tlessnum, Tzero, Tnums, Tnumgreater, Ttype,
                 Tspace, Texit };
@@ -938,7 +938,7 @@ THREAD(tocounted) = { Fenter, Ttwodup, Tcstore, Tcharplus, Tswap, Tcmove,
                         Texit };
 THREAD(adrtoin) = { Fenter, Tsource, Trot, Trot, Tminus, Tmin, Tzero, Tmax,
                     Ttoin, Tstore, Texit };
-THREAD(parse) = { Fenter, Tsource, Ttoin, Tfetch, Tslashstring,   
+THREAD(parse) = { Fenter, Tsource, Ttoin, Tfetch, Tslashstring,
         Tover, Ttor, Trot, Tscan, Tover, Tswap, Tqbranch, OFFSET(2),
         Tcharplus, Tadrtoin, Trfrom, Ttuck, Tminus, Texit };
 THREAD(word) = { Fenter, Tdup, Tsource, Ttoin, Tfetch, Tslashstring,
@@ -955,13 +955,13 @@ THREAD(squote) = { Fenter, Tlit, Txsquote, Tcommaxt,
 
 #define Txisquote Txsquote
 #define Tisquote  Tsquote
-         
+
 THREAD(dotquote) = { Fenter, Tsquote, Tlit, Ttype, Tcommaxt, Texit };
 
     /* Dictionary header [sizes in bytes]:
-     *   link[4], cfa[4], flags[1], name[n] 
+     *   link[4], cfa[4], flags[1], name[n]
      * Note that link is to the previous name field. */
-    
+
 // THREAD(lfatonfa) = { Fenter, Tlit, LIT(CELL*2 + 1), Tplus, Texit };
 THREAD(nfatolfa) = { Fenter, Tlit, LIT(CELL*2 + 1), Tminus, Texit };
 // THREAD(lfatocfa) = {  Fenter, Tcell, Tplus, Thfetch, Texit };
@@ -978,24 +978,24 @@ THREAD(find) = { Fenter, Tlatest, Tfetch,
         Tswap, Timmedq, Tzeroequal, Tone, Tor,
  /*3*/  Texit };
 
-THREAD(literal) = { Fenter,   
+THREAD(literal) = { Fenter,
         Tstate, Tfetch, Tqbranch, OFFSET(5),
-        Tlit, Tlit, Tcommaxt, Ticomma, 
+        Tlit, Tlit, Tcommaxt, Ticomma,
         Texit };
 
-THREAD(digitq) = { Fenter,   
+THREAD(digitq) = { Fenter,
         Tdup, Tlit, LIT(0x39), Tgreater, Tlit, LIT(0x100), Tand, Tplus,
         Tdup, Tlit, LIT(0x140), Tgreater, Tlit, LIT(0x107), Tand,
         Tminus, Tlit, LIT(0x30), Tminus,
         Tdup, Tbase, Tfetch, Tuless, Texit };
 
-THREAD(qsign) = { Fenter,   
+THREAD(qsign) = { Fenter,
         Tover, Tcfetch, Tlit, LIT(0x2c), Tminus, Tdup, Tabs,
         Tone, Tequal, Tand, Tdup, Tqbranch, OFFSET(6),
             Toneplus, Ttor, Tone, Tslashstring, Trfrom,
         Texit };
 
-THREAD(tonumber) = { Fenter,   
+THREAD(tonumber) = { Fenter,
  /*1*/  Tdup, Tqbranch, OFFSET(21 /*3*/),
         Tover, Tcfetch, Tdigitq,
         Tzeroequal, Tqbranch, OFFSET (3 /*2*/),
@@ -1016,11 +1016,11 @@ THREAD(qnumber) = { Fenter, Tdup, Tzero, Tdup, Trot, Tcount,
 
 extern const void * Tabort[];   /* forward reference */
 
-THREAD(interpret) = { Fenter,   
+THREAD(interpret) = { Fenter,
         Tticksource, Ttwostore, Tzero, Ttoin, Tstore,
  /*1*/  Tbl, Tword, Tdup, Tcfetch, Tqbranch, OFFSET(33 /*9*/),
         Tfind, Tqdup, Tqbranch, OFFSET(14 /*4*/),
-        Toneplus, Tstate, Tfetch, Tzeroequal, Tor, 
+        Toneplus, Tstate, Tfetch, Tzeroequal, Tor,
         Tqbranch, OFFSET(4 /*2*/),
         Texecute, Tbranch, OFFSET(2 /*3*/),
  /*2*/  Tcommaxt,
@@ -1050,12 +1050,12 @@ THREAD(abort) = { Fenter, Ts0, Tspstore, Tquit };
 
 THREAD(qabort) = { Fenter, Trot, Tqbranch, OFFSET(3), Titype, Tabort,
                    Ttwodrop, Texit };
-                   
+
 THREAD(abortquote) = { Fenter, Tisquote, Tlit, Tqabort, Tcommaxt, Texit };
 
 const char huhprompt[] = "\001?";
 
-THREAD(tick) = { Fenter, Tbl, Tword, Tfind, Tzeroequal, 
+THREAD(tick) = { Fenter, Tbl, Tword, Tfind, Tzeroequal,
         Tlit, huhprompt, Ticount, Tqabort, Texit };
 
 /* COMPILER */
@@ -1076,27 +1076,27 @@ THREAD(header) = { Fenter, Tlatest, Tfetch, Thcomma, /* link */
         Tbl, Thword, Thcfetch, Toneplus, Thallot,   /* name field */
         Talign, Tihere, Tswap, Thstore, Texit };    /* patch cfa cell */
 
-/* defined word is { Fdobuilds, Tdoesword, ... }  
+/* defined word is { Fdobuilds, Tdoesword, ... }
  * Fdobuilds is installed by DOES> so we can use CREATE or <BUILDS.
  * Both CREATE and <BUILDS should reserve the two cells */
 
-THREAD(create) = { Fenter, Theader, Tlit, Fdocreate, Tcommacf, 
+THREAD(create) = { Fenter, Theader, Tlit, Fdocreate, Tcommacf,
         Tihere, Tcellplus, Ticomma, Texit };
 
 THREAD(builds) = { Fenter, Tcreate, Texit };    /* same as CREATE */
 
-THREAD(variable) = { Fenter, Theader, Tlit, Fdovar, Tcommacf, 
-        Tihere, Tcellplus, Ticomma, Tcell, Tiallot, Texit };    
+THREAD(variable) = { Fenter, Theader, Tlit, Fdovar, Tcommacf,
+        Tihere, Tcellplus, Ticomma, Tcell, Tiallot, Texit };
         /* TODO: this is inline variable. fix for RAM/ROM */
 
-THREAD(constant) = { Fenter, Theader, Tlit, Fdocon, Tcommacf, 
+THREAD(constant) = { Fenter, Theader, Tlit, Fdocon, Tcommacf,
         Ticomma, Texit };
 
-THREAD(user) = { Fenter, Theader, Tlit, Fdouser, Tcommacf, 
+THREAD(user) = { Fenter, Theader, Tlit, Fdouser, Tcommacf,
         Ticomma, Texit };
 
-/* defining word thread is 
- *   { ...build code... Txdoes, Fenter, ...DOES> code.... }   
+/* defining word thread is
+ *   { ...build code... Txdoes, Fenter, ...DOES> code.... }
  *                              \--headless Forth word--/     */
 
 THREAD(xdoes) = { Fenter, Trfrom,           /* xt of headless doesword */
@@ -1104,10 +1104,10 @@ THREAD(xdoes) = { Fenter, Trfrom,           /* xt of headless doesword */
         Tlit, Fdobuilds, Tover, Tstorecf,   /* first cell: Fdobuilds */
         Tcellplus, Tistore,                 /* second cell: xt of doesword */
         Texit };
-        
-THREAD(does) = { Fenter, Tlit, Txdoes, Tcommaxt, 
+
+THREAD(does) = { Fenter, Tlit, Txdoes, Tcommaxt,
         Tlit, Fenter, Ticomma, Texit };
-        
+
 THREAD(recurse) = { Fenter, Tnewest, Tfetch, Tnfatocfa, Tcommaxt, Texit };
 
 THREAD(leftbracket) = { Fenter, Tzero, Tstate, Tstore, Texit };
@@ -1116,27 +1116,27 @@ THREAD(rightbracket) = { Fenter, Tminusone, Tstate, Tstore, Texit };
 
 THREAD(hide) = { Fenter, Tlatest, Tfetch, Tdup, Tnewest, Tstore,
         Tnfatolfa, Thfetch, Tlatest, Tstore, Texit };
-        
+
 THREAD(reveal) = { Fenter, Tnewest, Tfetch, Tlatest, Tstore, Texit };
 
-THREAD(immediate) = { Fenter, Tone, Tlatest, Tfetch, 
+THREAD(immediate) = { Fenter, Tone, Tlatest, Tfetch,
         Tone, Tchars, Tminus, Thcstore, Texit };
-        
+
 THREAD(colon) = { Fenter, Tbuilds, Thide, Trightbracket, Tstorecolon,
         Texit };
-        
+
 THREAD(semicolon) = { Fenter, Treveal, Tcommaexit, Tleftbracket, Texit };
 
 THREAD(brackettick) = { Fenter, Ttick, Tlit, Tlit, Tcommaxt, Ticomma, Texit };
 
-THREAD(postpone) = { Fenter, Tbl, Tword, Tfind, Tdup, Tzeroequal, 
+THREAD(postpone) = { Fenter, Tbl, Tword, Tfind, Tdup, Tzeroequal,
         Tlit, huhprompt, Ticount, Tqabort,
         Tzeroless, Tqbranch, OFFSET(10),
-        Tlit, Tlit, Tcommaxt, Ticomma, 
+        Tlit, Tlit, Tcommaxt, Ticomma,
         Tlit, Tcommaxt, Tcommaxt, Tbranch, OFFSET(2),
         Tcommaxt, Texit };
 
-THREAD(compile) = { Fenter, Trfrom, Tdup, Tcellplus, Ttor, 
+THREAD(compile) = { Fenter, Trfrom, Tdup, Tcellplus, Ttor,
         Tifetch, Tcommaxt, Texit };
 
 /* CONTROL STRUCTURES */
@@ -1153,15 +1153,15 @@ THREAD(while) = { Fenter, Tif, Tswap, Texit };
 THREAD(repeat) = { Fenter, Tagain, Tthen, Texit };
 
 THREAD(tol) = { Fenter, Tcell, Tlp, Tplusstore, Tlp, Tfetch, Tstore, Texit };
-THREAD(lfrom) = { Fenter, Tlp, Tfetch, Tfetch, Tcell, Tnegate, Tlp, 
+THREAD(lfrom) = { Fenter, Tlp, Tfetch, Tfetch, Tcell, Tnegate, Tlp,
         Tplusstore, Texit };
 THREAD(do) = { Fenter, Tlit, Txdo, Tcommaxt, Tihere, Tzero, Ttol, Texit };
-THREAD(endloop) = { Fenter, Tcommabranch, Tcommadest, 
+THREAD(endloop) = { Fenter, Tcommabranch, Tcommadest,
         Tlfrom, Tqdup, Tqbranch, OFFSET(4), Tthen, Tbranch, OFFSET(-6),
         Texit };
 THREAD(loop) = { Fenter, Tlit, Txloop, Tendloop, Texit };
 THREAD(plusloop) = { Fenter, Tlit, Txplusloop, Tendloop, Texit };
-THREAD(leave) = { Fenter, Tlit, Tunloop, Tcommaxt, 
+THREAD(leave) = { Fenter, Tlit, Tunloop, Tcommaxt,
         Tlit, Tbranch, Tcommabranch, Tihere, Tcommanone, Ttol, Texit };
 
 /* OTHER OPERATIONS */
@@ -1171,7 +1171,7 @@ THREAD(within) = { Fenter, Tover, Tminus, Ttor, Tminus, Trfrom,
 THREAD(move) =  { Fenter, Ttor, Ttwodup, Tswap, Tdup, Trfetch, Tplus,
         Twithin, Tqbranch, OFFSET(5), Trfrom, Tcmoveup, Tbranch, OFFSET(3),
         Trfrom, Tcmove, Texit };
-THREAD(depth) = { Fenter, Tspfetch, Ts0, Tswap, Tminus, Tcell, Tslash, 
+THREAD(depth) = { Fenter, Tspfetch, Ts0, Tswap, Tminus, Tcell, Tslash,
         Texit };
 THREAD(environmentq) = { Fenter, Ttwodrop, Tzero, Texit };
 
@@ -1204,11 +1204,11 @@ THREAD(words) = { Fenter, Tlatest, Tfetch,
 
 const char coldprompt[] = "\042CamelForth in C v0.1 - 14 Feb 2016";
 
-THREAD(cold) = { Fenter, 
+THREAD(cold) = { Fenter,
     Tuinit, Tu0, Tninit, Titod,     /* important initialization! */
     Tlit, coldprompt, Tcount, Ttype, Tcr,
     Tabort, };                      /* Tabort never exits */
-    
+
 /*
  * INNER INTERPRETER
  */
@@ -1217,7 +1217,7 @@ void interpreter(void)
 {
     void (*xt)(void *);     /* pointer to code function */
     void *w, *x;            /* generic pointers */
-    
+
     psp = &pstack[PSTACKSIZE-1];
     rsp = &rstack[RSTACKSIZE-1];
     ip = &Tcold;
@@ -1230,7 +1230,7 @@ void interpreter(void)
         xt = (void (*)())x;     /* too much casting! */
         w += CELL;
         (*xt)(w);               /* call function w/adrs of word def */
-    }        
+    }
 }
 
 /*
@@ -1319,7 +1319,7 @@ HEADER(skip, itod, 0, "\004SKIP");
 HEADER(scan, skip, 0, "\004SCAN");
 HEADER(sequal, scan, 0, "\002S=");
 HEADER(nequal, sequal, 0, "\002N=");
-    
+
 HEADER(key, nequal, 0, "\003KEY");
 HEADER(emit, key, 0, "\004EMIT");
 HEADER(keyq, emit, 0, "\004KEY?");
@@ -1451,7 +1451,7 @@ HEADER(constant, variable, 0, "\010CONSTANT");
 HEADER(user, constant, 0, "\004USER");
 HEADER(create, user, 0, "\006CREATE");
 HEADER(xdoes, create, 0, "\007(DOES>)");
-HEADER(does, xdoes, IMMEDIATE, "\005DOES>");       
+HEADER(does, xdoes, IMMEDIATE, "\005DOES>");
 HEADER(recurse, does, IMMEDIATE, "\007RECURSE");
 HEADER(leftbracket, recurse, IMMEDIATE, "\001[");
 HEADER(rightbracket, leftbracket, 0, "\001]");
