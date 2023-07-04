@@ -90,7 +90,7 @@ void setup() {
   SerialUSB.begin(115200);
   // SerialUSB.print("\nCamelforth in C   ");
   SerialUSB.print("\nspecific to Arduino M0 Pro   ");
-  SerialUSB.println("as in git repo Tue  4 Jul 11:44:18 UTC 2023");
+  SerialUSB.println("as in git repo Tue  4 Jul 13:30:25 UTC 2023");
   trapped();
 }
 
