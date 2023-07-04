@@ -1491,4 +1491,3 @@ HEADER(dots, dothhhh, 0, "\002.S");
 HEADER(dump, dots, 0, "\004DUMP");
 HEADER(words, dump, 0, "\005WORDS");
 HEADER(cold, words, 0, "\004COLD");
-Tue  4 Jul 11:22:34 UTC 2023
