@@ -47,40 +47,39 @@
 #define CELLWIDTH 32        /* # of bits/cell */
 #define CELLMASK 0xffffffff /* mask for CELLWIDTH bits */
 
-#define PSTACKSIZE 64       /* 64 cells */
-#define RSTACKSIZE 64       /* 64 cells */
-#define LSTACKSIZE 32       /* 32 cells */
-#define USERSIZE   32       /* 32 cells */
-#define TIBSIZE    84       /* 84 characters */
-#define PADSIZE    84       /* 84 characters */
-#define HOLDSIZE   34       /* 34 characters */
+#define PSTACKSIZE 64 /* 64 cells */
+#define RSTACKSIZE 64 /* 64 cells */
+#define LSTACKSIZE 32 /* 32 cells */
+#define USERSIZE 32   /* 32 cells */
+#define TIBSIZE 84    /* 84 characters */
+#define PADSIZE 84    /* 84 characters */
+#define HOLDSIZE 34   /* 34 characters */
 
 /*
  * DATA STRUCTURES
  */
 
-#ifdef TIVA_C       /* why won't TI compiler handle variable string? */
+#ifdef TIVA_C /* why won't TI compiler handle variable string? */
 struct Header {
-    void * link;            /* pointer to previous header */
-    void * cfa;             /* pointer to high level def'n */
-    unsigned char flags;    /* immed flag and others */
-    char nfa[13];           /* inline name string */
+  void *link;          /* pointer to previous header */
+  void *cfa;           /* pointer to high level def'n */
+  unsigned char flags; /* immed flag and others */
+  char nfa[13];        /* inline name string */
 };
 #else
 struct Header {
-    void * link;            /* pointer to previous header */
-    void * cfa;             /* pointer to high level def'n */
-    unsigned char flags;    /* immed flag and others */
-    char nfa[];             /* inline name string */
+  void *link;          /* pointer to previous header */
+  void *cfa;           /* pointer to high level def'n */
+  unsigned char flags; /* immed flag and others */
+  char nfa[];          /* inline name string */
 };
 #endif
- 
-#define HEADER(name,prev,flags,namestring) const struct Header H##name =\
-    { (char *)H##prev.nfa, T##name, flags, namestring }
-#define IMMEDIATE 1         /* immediate bit in flags */
 
-#define CODE(name)       void F##name (void * pfa)
-#define PRIMITIVE(name)  const void * T##name[] = { F##name }
-#define THREAD(name)     const void * T##name[]
-#define OFFSET(n)   (void *)(n*CELL)       /* see CELL above, = 4 */
-#define LIT(n)      (void *)(n)
+#define HEADER(name, prev, flags, namestring) const struct Header H##name = { (char *)H##prev.nfa, T##name, flags, namestring }
+#define IMMEDIATE 1 /* immediate bit in flags */
+
+#define CODE(name) void F##name(void *pfa)
+#define PRIMITIVE(name) const void *T##name[] = { F##name }
+#define THREAD(name) const void *T##name[]
+#define OFFSET(n) (void *)(n * CELL) /* see CELL above, = 4 */
+#define LIT(n) (void *)(n)
