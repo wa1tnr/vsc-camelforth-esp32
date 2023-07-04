@@ -1,8 +1,17 @@
-Tue  4 Jul 12:39:05 UTC 2023
+Tue  4 Jul 15:25:40 UTC 2023
 
 CamelForth in C
 
 Arduino IDE 2.1.1    xwayland (xeyes follows it)    Debian bookworm amd64
+
+DUMP seems to be reasonably correct.
+The DOTS (.S) word seems fine now.
+
+Both may have an address misalignment by .. four bytes, say.
+They seem to agree and make sense as-presented (15:25 UTC 4 July 2023).
+
+
+Older notes follow.
 
 Compiles 'visually' clean in the IDE (did not check warnings from defaults yet).
 
