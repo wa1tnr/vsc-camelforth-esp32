@@ -1,4 +1,5 @@
-/* Sun  2 Jul 16:18:33 UTC 2023 */
+/* forth.c */
+/* Tue  4 Jul 15:25:40 UTC 2023 */
 
 /****h* camelforth/forth.c
  * NAME
@@ -74,29 +75,33 @@ unsigned char ROMDICT[1024];
 #include "tivaio.inc"
 #endif
 
-#define NULL 0 // wokwi and Uno R4 2 July 2023
+#define NULL 0  // wokwi and Uno R4 2 July 2023
 
 /*
  * RUN-TIME FUNCTIONS FOR DEFINED WORDS
  */
 
-void Fdocon(void *pfa) { *--psp = *(unsigned int *)pfa; }
-
-void Fdovar(void *pfa) {
-    *--psp = *(unsigned int *)pfa; /* pf holds variable address */
+void Fdocon(void *pfa) {
+  *--psp = *(unsigned int *)pfa;
 }
 
-void Fdorom(void *pfa) { *--psp = (unsigned int)pfa; }
+void Fdovar(void *pfa) {
+  *--psp = *(unsigned int *)pfa; /* pf holds variable address */
+}
+
+void Fdorom(void *pfa) {
+  *--psp = (unsigned int)pfa;
+}
 
 void Fenter(void *pfa) {
-    *--rsp = (unsigned int)ip; /* push old IP on return stack */
-    ip = pfa;                  /* IP points to thread */
+  *--rsp = (unsigned int)ip; /* push old IP on return stack */
+  ip = pfa;                  /* IP points to thread */
 }
 
 void Fdouser(void *pfa) {
-    unsigned int i;
-    i = *(unsigned int *)pfa;              /* pf holds user var index */
-    *--psp = (unsigned int)(&uservars[i]); /* stack adrs of user var */
+  unsigned int i;
+  i = *(unsigned int *)pfa;              /* pf holds user var index */
+  *--psp = (unsigned int)(&uservars[i]); /* stack adrs of user var */
 }
 
 /* CREATE to support FIG-Forth style DOES>
@@ -107,7 +112,9 @@ void Fdouser(void *pfa) {
  * DOES> will change child word to    [Fdobuilds] [Tdoesword] [...data...]
  */
 
-void Fdocreate(void *pfa) { *--psp = (unsigned int)pfa + CELL; }
+void Fdocreate(void *pfa) {
+  *--psp = (unsigned int)pfa + CELL;
+}
 
 /* FIG-Forth style <BUILDS..DOES>
  * Defined (child) word is  [Fdobuilds] [Tdoesword] [...data...]
@@ -115,279 +122,309 @@ void Fdocreate(void *pfa) { *--psp = (unsigned int)pfa + CELL; }
  * Forth word to be executed, that implements the DOES> action */
 
 void Fdobuilds(void *pfa) {
-    void (*xt)(void *); /* pointer to code function */
-    void *w, *x;        /* generic pointers */
+  void (*xt)(void *); /* pointer to code function */
+  void *w, *x;        /* generic pointers */
 
-    w = *(void **)pfa; /* fetch word address from param field */
-    pfa += CELL;
-    *--psp = (unsigned int)pfa; /* push address of following data */
+  w = *(void **)pfa; /* fetch word address from param field */
+  pfa += CELL;
+  *--psp = (unsigned int)pfa; /* push address of following data */
 
-    x = *(void **)w;    /* fetch function adrs from word def */
-    xt = (void (*)())x; /* too much casting! */
-    w += CELL;
-    (*xt)(w); /* call function w/adrs of word def */
+  x = *(void **)w;    /* fetch function adrs from word def */
+  xt = (void (*)())x; /* too much casting! */
+  w += CELL;
+  (*xt)(w); /* call function w/adrs of word def */
 }
 
 /*
  * PRIMITIVE FUNCTIONS
  */
 
-CODE(exit) { ip = (void *)(*rsp++); /* pop IP from return stack */ }
+CODE(exit) {
+  ip = (void *)(*rsp++); /* pop IP from return stack */
+}
 
 CODE(execute) {
-    void (*xt)(void *); /* pointer to code function */
-    void *w, *x;        /* generic pointers */
+  void (*xt)(void *); /* pointer to code function */
+  void *w, *x;        /* generic pointers */
 
-    w = *(void **)psp; /* fetch word address from stack */
-    psp++;
-    x = *(void **)w;    /* fetch function adrs from word def */
-    xt = (void (*)())x; /* too much casting! */
-    w += CELL;
-    (*xt)(w); /* call function w/adrs of word def */
+  w = *(void **)psp; /* fetch word address from stack */
+  psp++;
+  x = *(void **)w;    /* fetch function adrs from word def */
+  xt = (void (*)())x; /* too much casting! */
+  w += CELL;
+  (*xt)(w); /* call function w/adrs of word def */
 }
 
 CODE(lit) {
-    *--psp = *(unsigned int *)ip; /* fetch inline value */
-    ip += CELL;
+  *--psp = *(unsigned int *)ip; /* fetch inline value */
+  ip += CELL;
 }
 
 /* STACK OPERATIONS */
 
 CODE(dup) {
-    --psp;
-    psp[0] = psp[1];
+  --psp;
+  psp[0] = psp[1];
 }
 
 CODE(qdup) {
-    if (*psp != 0) {
-        --psp;
-        psp[0] = psp[1];
-    }
+  if (*psp != 0) {
+    --psp;
+    psp[0] = psp[1];
+  }
 }
 
-CODE(drop) { psp++; }
+CODE(drop) {
+  psp++;
+}
 
 CODE(swap) {
-    unsigned int x;
-    x = psp[1];
-    psp[1] = psp[0];
-    psp[0] = x;
+  unsigned int x;
+  x = psp[1];
+  psp[1] = psp[0];
+  psp[0] = x;
 }
 
 CODE(over) {
-    --psp;
-    psp[0] = psp[2];
+  --psp;
+  psp[0] = psp[2];
 }
 
 CODE(rot) {
-    unsigned int x;
-    x = psp[2];
-    psp[2] = psp[1];
-    psp[1] = psp[0];
-    psp[0] = x;
+  unsigned int x;
+  x = psp[2];
+  psp[2] = psp[1];
+  psp[1] = psp[0];
+  psp[0] = x;
 }
 
-CODE(nip) { // x1 x2 -- x2
-    psp[1] = psp[0];
-    psp++;
+CODE(nip) {  // x1 x2 -- x2
+  psp[1] = psp[0];
+  psp++;
 }
 
-CODE(tuck) { // x1 x2 -- x2 x1 x2
-    unsigned int x;
-    --psp;
-    x = psp[2];               // x1
-    psp[2] = psp[0] = psp[1]; // x2
-    psp[1] = x;
+CODE(tuck) {  // x1 x2 -- x2 x1 x2
+  unsigned int x;
+  --psp;
+  x = psp[2];                // x1
+  psp[2] = psp[0] = psp[1];  // x2
+  psp[1] = x;
 }
 
-CODE(tor) { *--rsp = *psp++; }
+CODE(tor) {
+  *--rsp = *psp++;
+}
 
-CODE(rfrom) { *--psp = *rsp++; }
+CODE(rfrom) {
+  *--psp = *rsp++;
+}
 
-CODE(rfetch) { *--psp = *rsp; }
+CODE(rfetch) {
+  *--psp = *rsp;
+}
 
 CODE(spfetch) {
-    unsigned int temp;
-    temp = (unsigned int)psp; /* circumvent weird optimization */
-    *--psp = temp;
+  unsigned int temp;
+  temp = (unsigned int)psp; /* circumvent weird optimization */
+  *--psp = temp;
 }
 
-CODE(spstore) { psp = (unsigned int *)(*psp); /* do not use *psp++ */ }
+CODE(spstore) {
+  psp = (unsigned int *)(*psp); /* do not use *psp++ */
+}
 
-CODE(rpfetch) { *--psp = (unsigned int)rsp; }
+CODE(rpfetch) {
+  *--psp = (unsigned int)rsp;
+}
 
-CODE(rpstore) { rsp = (unsigned int *)(*psp++); }
+CODE(rpstore) {
+  rsp = (unsigned int *)(*psp++);
+}
 
 /* MEMORY OPERATIONS */
 
 CODE(fetch) {
-    unsigned int *ptr;
-    ptr = (unsigned int *)psp[0];
-    psp[0] = *ptr;
+  unsigned int *ptr;
+  ptr = (unsigned int *)psp[0];
+  psp[0] = *ptr;
 }
 
 CODE(store) {
-    unsigned int *ptr;
-    ptr = (unsigned int *)(*psp++);
-    *ptr = *psp++;
+  unsigned int *ptr;
+  ptr = (unsigned int *)(*psp++);
+  *ptr = *psp++;
 }
 
 CODE(cfetch) {
-    unsigned char *ptr;
-    ptr = (unsigned char *)psp[0];
-    psp[0] = (unsigned int)(*ptr);
+  unsigned char *ptr;
+  ptr = (unsigned char *)psp[0];
+  psp[0] = (unsigned int)(*ptr);
 }
 
 CODE(cstore) {
-    unsigned char *ptr;
-    ptr = (unsigned char *)(*psp++);
-    *ptr = (unsigned char)(*psp++);
+  unsigned char *ptr;
+  ptr = (unsigned char *)(*psp++);
+  *ptr = (unsigned char)(*psp++);
 }
 
 /* ARITHMETIC AND LOGIC OPERATIONS */
 
 CODE(plus) {
-    psp[1] += psp[0];
-    psp++;
+  psp[1] += psp[0];
+  psp++;
 }
 
 CODE(plusstore) {
-    unsigned int *ptr;
-    ptr = (unsigned int *)(*psp++);
-    *ptr += *psp++;
+  unsigned int *ptr;
+  ptr = (unsigned int *)(*psp++);
+  *ptr += *psp++;
 }
 
 CODE(mplus) {
-    uint64_t d;
-    unsigned int n;
-    n = *psp++;
-    /* enforce Forth word order, high on top */
-    d = (((uint64_t)psp[0]) << CELLWIDTH) + psp[1];
-    d += n;
-    psp[0] = (unsigned int)(d >> CELLWIDTH);
-    psp[1] = d & CELLMASK;
+  uint64_t d;
+  unsigned int n;
+  n = *psp++;
+  /* enforce Forth word order, high on top */
+  d = (((uint64_t)psp[0]) << CELLWIDTH) + psp[1];
+  d += n;
+  psp[0] = (unsigned int)(d >> CELLWIDTH);
+  psp[1] = d & CELLMASK;
 }
 
 CODE(minus) {
-    psp[1] -= psp[0];
-    psp++;
+  psp[1] -= psp[0];
+  psp++;
 }
 
 CODE(mult) {
-    signed int r;
-    r = (signed int)psp[1] * (signed int)psp[0];
-    psp++;
-    psp[0] = (unsigned int)r;
+  signed int r;
+  r = (signed int)psp[1] * (signed int)psp[0];
+  psp++;
+  psp[0] = (unsigned int)r;
 }
 
 CODE(div) {
-    signed int r;
-    r = (signed int)psp[1] / (signed int)psp[0];
-    psp++;
-    psp[0] = (unsigned int)r;
+  signed int r;
+  r = (signed int)psp[1] / (signed int)psp[0];
+  psp++;
+  psp[0] = (unsigned int)r;
 }
 
 CODE(and) {
-    psp[1] &= psp[0];
-    psp++;
+  psp[1] &= psp[0];
+  psp++;
 }
 
 CODE(or) {
-    psp[1] |= psp[0];
-    psp++;
+  psp[1] |= psp[0];
+  psp++;
 }
 
 CODE(xor) {
-    psp[1] ^= psp[0];
-    psp++;
+  psp[1] ^= psp[0];
+  psp++;
 }
 
-CODE(invert) { *psp ^= CELLMASK; }
+CODE(invert) {
+  *psp ^= CELLMASK;
+}
 
-CODE(negate) { *psp = -(*psp); }
+CODE(negate) {
+  *psp = -(*psp);
+}
 
-CODE(oneplus) { *psp += 1; }
+CODE(oneplus) {
+  *psp += 1;
+}
 
-CODE(oneminus) { *psp -= 1; }
+CODE(oneminus) {
+  *psp -= 1;
+}
 
 CODE(swapbytes) {
-    unsigned int u;
-    u = *psp;
-    *psp = ((u & 0xff) << 8) | ((u & 0xff00) >> 8);
+  unsigned int u;
+  u = *psp;
+  *psp = ((u & 0xff) << 8) | ((u & 0xff00) >> 8);
 }
 
-CODE(twostar) { *psp = (*psp) << 1; }
+CODE(twostar) {
+  *psp = (*psp) << 1;
+}
 
 CODE(twoslash) {
-    signed int n;
-    n = (signed int)(*psp);
-    *psp = (unsigned int)(n >> 1);
+  signed int n;
+  n = (signed int)(*psp);
+  *psp = (unsigned int)(n >> 1);
 }
 
 CODE(lshift) {
-    unsigned int u;
-    u = *psp++;
-    *psp = (*psp) << u;
+  unsigned int u;
+  u = *psp++;
+  *psp = (*psp) << u;
 }
 
 CODE(rshift) {
-    unsigned int u;
-    u = *psp++;
-    *psp = (*psp) >> u;
+  unsigned int u;
+  u = *psp++;
+  *psp = (*psp) >> u;
 }
 
 /* COMPARISONS */
 
-CODE(zeroequal) { psp[0] = (psp[0] == 0) ? -1 : 0; }
+CODE(zeroequal) {
+  psp[0] = (psp[0] == 0) ? -1 : 0;
+}
 
-CODE(zeroless) { psp[0] = ((signed int)(psp[0]) < 0) ? -1 : 0; }
+CODE(zeroless) {
+  psp[0] = ((signed int)(psp[0]) < 0) ? -1 : 0;
+}
 
 CODE(equal) {
-    psp[1] = (psp[1] == psp[0]) ? -1 : 0;
-    psp++;
+  psp[1] = (psp[1] == psp[0]) ? -1 : 0;
+  psp++;
 }
 
 CODE(notequal) {
-    psp[1] = (psp[1] != psp[0]) ? -1 : 0;
-    psp++;
+  psp[1] = (psp[1] != psp[0]) ? -1 : 0;
+  psp++;
 }
 
 CODE(less) {
-    psp[1] = ((signed int)(psp[1]) < (signed int)(psp[0])) ? -1 : 0;
-    psp++;
+  psp[1] = ((signed int)(psp[1]) < (signed int)(psp[0])) ? -1 : 0;
+  psp++;
 }
 
 CODE(greater) {
-    psp[1] = ((signed int)(psp[1]) > (signed int)(psp[0])) ? -1 : 0;
-    psp++;
+  psp[1] = ((signed int)(psp[1]) > (signed int)(psp[0])) ? -1 : 0;
+  psp++;
 }
 
 CODE(uless) {
-    psp[1] = (psp[1] < psp[0]) ? -1 : 0;
-    psp++;
+  psp[1] = (psp[1] < psp[0]) ? -1 : 0;
+  psp++;
 }
 
 CODE(ugreater) {
-    psp[1] = (psp[1] > psp[0]) ? -1 : 0;
-    psp++;
+  psp[1] = (psp[1] > psp[0]) ? -1 : 0;
+  psp++;
 }
 
 /* BRANCH AND LOOP */
 
-CODE(branch) {                    /* Tbranch,-4  loops back to itself */
-    int offset;                   /* Tbranch,+4  is a no-op */
-    offset = *(unsigned int *)ip; /* fetch inline offset */
-    ip += offset;
+CODE(branch) {                  /* Tbranch,-4  loops back to itself */
+  int offset;                   /* Tbranch,+4  is a no-op */
+  offset = *(unsigned int *)ip; /* fetch inline offset */
+  ip += offset;
 }
 
 CODE(qbranch) { /* Tbranch,-4  loops back to itself */
-    int offset;
-    if (*psp++ == 0) {
-        offset = *(unsigned int *)ip; /* fetch inline offset */
-        ip += offset;
-    } else {
-        ip += CELL;
-    }
+  int offset;
+  if (*psp++ == 0) {
+    offset = *(unsigned int *)ip; /* fetch inline offset */
+    ip += offset;
+  } else {
+    ip += CELL;
+  }
 }
 
 /* '83 and ANSI standard +LOOP behavior:  (per dpans-6)
@@ -402,148 +439,152 @@ CODE(qbranch) { /* Tbranch,-4  loops back to itself */
 #define CIRCULARGE(x, y) ((signed int)(x - y) >= 0)
 
 CODE(xplusloop) { /* n -- */
-    int offset;
-    bool f;
-    f = CIRCULARGE(rsp[0], rsp[1]);        // circular compare index:limit
-    rsp[0] += *psp++;                      // add n to index
-    if (CIRCULARGE(rsp[0], rsp[1]) != f) { // have we crossed the boundary?
-        rsp += 2;                          // yes: drop index, limit
-        ip += CELL;                        // and exit loop
-    } else {
-        offset = *(unsigned int *)ip; // no: branch
-        ip += offset;
-    }
+  int offset;
+  bool f;
+  f = CIRCULARGE(rsp[0], rsp[1]);         // circular compare index:limit
+  rsp[0] += *psp++;                       // add n to index
+  if (CIRCULARGE(rsp[0], rsp[1]) != f) {  // have we crossed the boundary?
+    rsp += 2;                             // yes: drop index, limit
+    ip += CELL;                           // and exit loop
+  } else {
+    offset = *(unsigned int *)ip;  // no: branch
+    ip += offset;
+  }
 }
 
 CODE(xloop) {
-    int offset;
-    rsp[0] += 1;            // add 1 to index
-    if (rsp[0] == rsp[1]) { // have we reached the limit?
-        rsp += 2;           // yes: drop index, limit
-        ip += CELL;         // and exit loop
-    } else {
-        offset = *(unsigned int *)ip; // no: branch
-        ip += offset;
-    }
+  int offset;
+  rsp[0] += 1;             // add 1 to index
+  if (rsp[0] == rsp[1]) {  // have we reached the limit?
+    rsp += 2;              // yes: drop index, limit
+    ip += CELL;            // and exit loop
+  } else {
+    offset = *(unsigned int *)ip;  // no: branch
+    ip += offset;
+  }
 }
 
-CODE(xdo) {          /* limit start -- */
-    *--rsp = psp[1]; // push limit
-    *--rsp = *psp++; // push starting index
-    psp++;
+CODE(xdo) {         /* limit start -- */
+  *--rsp = psp[1];  // push limit
+  *--rsp = *psp++;  // push starting index
+  psp++;
 }
 
 CODE(i) {
-    *--psp = rsp[0]; // first loop index
+  *--psp = rsp[0];  // first loop index
 }
 
 CODE(j) {
-    *--psp = rsp[2]; // second loop index
+  *--psp = rsp[2];  // second loop index
 }
 
-CODE(unloop) { rsp += 2; }
+CODE(unloop) {
+  rsp += 2;
+}
 
 /* MULTIPLY AND DIVIDE */
 
 CODE(umstar) { /* u1 u2 -- ud */
-    uint64_t ud;
-    ud = (uint64_t)psp[0] * (uint64_t)psp[1];
-    psp[1] = ud & (uint64_t)0xffffffff;
-    psp[0] = ud >> 32;
+  uint64_t ud;
+  ud = (uint64_t)psp[0] * (uint64_t)psp[1];
+  psp[1] = ud & (uint64_t)0xffffffff;
+  psp[0] = ud >> 32;
 }
 
 CODE(umslashmod) { /* ud u1 -- rem quot */
-    uint64_t ud, u1;
-    u1 = *psp++;
-    ud = ((uint64_t)psp[0] << 32) | (uint64_t)psp[1];
-    psp[1] = (unsigned int)(ud % u1);
-    psp[0] = (unsigned int)(ud / u1);
+  uint64_t ud, u1;
+  u1 = *psp++;
+  ud = ((uint64_t)psp[0] << 32) | (uint64_t)psp[1];
+  psp[1] = (unsigned int)(ud % u1);
+  psp[0] = (unsigned int)(ud / u1);
 }
 
 /* BLOCK AND STRING OPERATIONS */
 
 CODE(fill) { /* c-addr u char -- */
-    unsigned char c, *dst;
-    unsigned int u;
-    c = (unsigned char)*psp++;
-    u = *psp++;
-    dst = (unsigned char *)*psp++;
-    while (u-- > 0)
-        *dst++ = c;
+  unsigned char c, *dst;
+  unsigned int u;
+  c = (unsigned char)*psp++;
+  u = *psp++;
+  dst = (unsigned char *)*psp++;
+  while (u-- > 0)
+    *dst++ = c;
 }
 
 CODE(cmove) { /* src dst u -- */
-    unsigned char *dst, *src;
-    unsigned int u;
-    u = *psp++;
-    dst = (unsigned char *)*psp++;
-    src = (unsigned char *)*psp++;
-    while (u-- > 0)
-        *dst++ = *src++;
+  unsigned char *dst, *src;
+  unsigned int u;
+  u = *psp++;
+  dst = (unsigned char *)*psp++;
+  src = (unsigned char *)*psp++;
+  while (u-- > 0)
+    *dst++ = *src++;
 }
 
 CODE(cmoveup) { /* src dst u -- */
-    unsigned char *dst, *src;
-    unsigned int u;
-    u = *psp++;
-    dst = (unsigned char *)(u + *psp++);
-    src = (unsigned char *)(u + *psp++);
-    while (u-- > 0)
-        *--dst = *--src;
+  unsigned char *dst, *src;
+  unsigned int u;
+  u = *psp++;
+  dst = (unsigned char *)(u + *psp++);
+  src = (unsigned char *)(u + *psp++);
+  while (u-- > 0)
+    *--dst = *--src;
 }
 
 CODE(skip) { /* c-addr u c -- c-addr' u' */
-    unsigned char c, *src;
-    unsigned int u;
-    c = (unsigned char)*psp++;
-    u = *psp++;
-    src = (unsigned char *)*psp++;
-    while ((u > 0) && (c == *src)) {
-        src++;
-        u--;
-    }
-    *--psp = (unsigned int)src;
-    *--psp = u;
+  unsigned char c, *src;
+  unsigned int u;
+  c = (unsigned char)*psp++;
+  u = *psp++;
+  src = (unsigned char *)*psp++;
+  while ((u > 0) && (c == *src)) {
+    src++;
+    u--;
+  }
+  *--psp = (unsigned int)src;
+  *--psp = u;
 }
 
 CODE(scan) { /* c-addr u c -- c-addr' u' */
-    unsigned char c, *src;
-    unsigned int u;
-    c = (unsigned char)*psp++;
-    u = *psp++;
-    src = (unsigned char *)*psp++;
-    while ((u > 0) && (c != *src)) {
-        src++;
-        u--;
-    }
-    *--psp = (unsigned int)src;
-    *--psp = u;
+  unsigned char c, *src;
+  unsigned int u;
+  c = (unsigned char)*psp++;
+  u = *psp++;
+  src = (unsigned char *)*psp++;
+  while ((u > 0) && (c != *src)) {
+    src++;
+    u--;
+  }
+  *--psp = (unsigned int)src;
+  *--psp = u;
 }
 
 CODE(sequal) { /* c-addr1 c-addr2 u -- n */
-    unsigned char *dst, *src;
-    unsigned int u;
-    int result = 0;
-    u = *psp++;
-    dst = (unsigned char *)*psp++;
-    src = (unsigned char *)*psp++;
-    while ((u-- > 0) & (result == 0)) {
-        if (*dst != *src) {
-            if (*dst > *src)
-                result = 1;
-            else if (*dst < *src)
-                result = -1;
-        }
-        dst++;
-        src++;
+  unsigned char *dst, *src;
+  unsigned int u;
+  int result = 0;
+  u = *psp++;
+  dst = (unsigned char *)*psp++;
+  src = (unsigned char *)*psp++;
+  while ((u-- > 0) & (result == 0)) {
+    if (*dst != *src) {
+      if (*dst > *src)
+        result = 1;
+      else if (*dst < *src)
+        result = -1;
     }
-    *--psp = (unsigned int)result;
+    dst++;
+    src++;
+  }
+  *--psp = (unsigned int)result;
 }
 
 /* TERMINAL I/O */
 
 extern char getch();
-CODE(key) { *--psp = (unsigned int)getch(); }
+CODE(key) {
+  *--psp = (unsigned int)getch();
+}
 
 extern void putch(char c);
 
@@ -556,52 +597,61 @@ CODE(emit) {
 #include <stdio.h> /* TODO move this upwards */
 
 CODE(emit) {
-    // printf("%c", *psp++);
-    putch((char)*psp++);
+  // printf("%c", *psp++);
+  putch((char)*psp++);
 }
 
-CODE(keyq) { *--psp = getquery(); }
+CODE(keyq) {
+  *--psp = getquery();
+}
 
 CODE(dot) { /* temporary definition for testing */
-    printf(" %d", *psp++);
+  printf(" %d", *psp++);
 }
 
 CODE(dothh) { /* temporary definition for testing */
-    printf(" %2x", *psp++);
+  printf(" %2x", *psp++);
 }
 
 CODE(dothhhh) { /* temporary definition for testing */
-    printf(" %8x", *psp++);
+  printf(" %8x", *psp++);
 }
 
+/* the dots word and the dump word received local attention 4 July 2023, */
+/* as they were inoperative at first - though they work unmodified elsewhere. */
+/* This is viewed as an artifact of the method of compiling C Language code */
+/* in a C++ environment and the use of well sort-of wrapper functions and such. */
+
+/* comments are out of date 5 minutes after writing them - do not trust them. ;) */
+
 CODE(dots) { /* print stack, for testing */
-    unsigned int *p, *q;
-    p = &pstack[PSTACKSIZE - 2]; /* deepest element on stack */
-    q = &pstack[PSTACKSIZE];
-    if (-1) {
-      print_the_address(q);
-    }
-    // p--;
-    
-    while (p > (psp - 1)) {
-        print_each_number(p--); // p--
-        // p--;
-    }
+  unsigned int *p, *q;
+  p = &pstack[PSTACKSIZE - 2]; /* deepest element on stack */
+  q = &pstack[PSTACKSIZE - 2]; /* had no - 2 here very recently */
+  if (-1) {
+    // print_the_address(--q);
+    print_the_address(q);
+  }
+  while (p > (psp - 1)) {
+    print_each_number(p--);
+  }
 }
 
 CODE(dump) { /* adr n -- */
-    unsigned char *p;
-    unsigned int n, i;
-    n = *psp++;
-    p = (unsigned char *)*psp++;
-    for (i = 0; i < n; i++) {
-        if ((i & 0xf) == 0)
-            printf("\n%8x:", (unsigned int)p);
-        printf(" %02x", *p++);
-    }
+  unsigned char *p;
+  unsigned int n, i;
+  n = *psp++;
+  p = (unsigned char *)*psp++;
+  for (i = 0; i < n; i++) {  // n is how many lines of 16 bytes wanted
+    if ((i & 0xf) == 0)      // do this 'if' only for legend on left?
+      print_dump_addr(p);
+    print_dumped_byte(p++);  // only increment of p
+  }                          // iterated by 16-byte line in for loop
 }
 
-CODE(bye) { run = 0; }
+CODE(bye) {
+  run = 0;
+}
 
 /*
  * HIGH LEVEL WORD DEFINITIONS
@@ -610,7 +660,7 @@ CODE(bye) { run = 0; }
 PRIMITIVE(exit);
 PRIMITIVE(execute);
 PRIMITIVE(lit);
-PRIMITIVE(dup); // const void * Tdup[]  = { Fdup };
+PRIMITIVE(dup);  // const void * Tdup[]  = { Fdup };
 PRIMITIVE(qdup);
 PRIMITIVE(drop);
 PRIMITIVE(swap);
@@ -681,12 +731,12 @@ PRIMITIVE(umslashmod);
 PRIMITIVE(fill);
 PRIMITIVE(cmove);
 PRIMITIVE(cmoveup);
-THREAD(itod) = {Fcmove}; /* synonym */
+THREAD(itod) = { Fcmove }; /* synonym */
 
 PRIMITIVE(skip);
 PRIMITIVE(scan);
 PRIMITIVE(sequal);
-THREAD(nequal) = {Fsequal}; /* synonym */
+THREAD(nequal) = { Fsequal }; /* synonym */
 
 PRIMITIVE(key);
 PRIMITIVE(emit);
@@ -700,56 +750,56 @@ PRIMITIVE(bye);
 
 /* USER VARIABLES */
 
-THREAD(u0) = {Fdouser, LIT(0)};
-THREAD(toin) = {Fdouser, LIT(1)};
-THREAD(base) = {Fdouser, LIT(2)};
-THREAD(state) = {Fdouser, LIT(3)};
-THREAD(dp) = {Fdouser, LIT(4)};
-THREAD(ticksource) = {Fdouser, LIT(5)}; /* two cells */
-THREAD(latest) = {Fdouser, LIT(7)};
-THREAD(hp) = {Fdouser, LIT(8)};
-THREAD(lp) = {Fdouser, LIT(9)};
+THREAD(u0) = { Fdouser, LIT(0) };
+THREAD(toin) = { Fdouser, LIT(1) };
+THREAD(base) = { Fdouser, LIT(2) };
+THREAD(state) = { Fdouser, LIT(3) };
+THREAD(dp) = { Fdouser, LIT(4) };
+THREAD(ticksource) = { Fdouser, LIT(5) }; /* two cells */
+THREAD(latest) = { Fdouser, LIT(7) };
+THREAD(hp) = { Fdouser, LIT(8) };
+THREAD(lp) = { Fdouser, LIT(9) };
 // THREAD(idp) = { Fdouser, LIT(10) };          /* not used in this model */
-THREAD(newest) = {Fdouser, LIT(11)};
+THREAD(newest) = { Fdouser, LIT(11) };
 
 extern const struct Header Hcold;
 
-THREAD(uinit) = {Fdorom,  LIT(0), LIT(0),  LIT(10),
-                 LIT(0),                              // u0 >in base state
-                 RAMDICT, LIT(0), LIT(0),  Hcold.nfa, // dp source latest
-                 LIT(0),  LIT(0), ROMDICT, LIT(0)};   // hp lp idp newest
-THREAD(ninit) = {Fdocon, LIT(16 * CELL)};
+THREAD(uinit) = { Fdorom, LIT(0), LIT(0), LIT(10),
+                  LIT(0),                              // u0 >in base state
+                  RAMDICT, LIT(0), LIT(0), Hcold.nfa,  // dp source latest
+                  LIT(0), LIT(0), ROMDICT, LIT(0) };   // hp lp idp newest
+THREAD(ninit) = { Fdocon, LIT(16 * CELL) };
 
 /* CONSTANTS and some system variables */
 
-THREAD(pad) = {Fdocon, padarea};
-THREAD(l0) = {Fdocon, &lstack[LSTACKSIZE - 1]};
-THREAD(s0) = {Fdocon, &pstack[PSTACKSIZE - 1]};
-THREAD(r0) = {Fdocon, &rstack[RSTACKSIZE - 1]};
-THREAD(tib) = {Fdocon, tibarea};
-THREAD(tibsize) = {Fdocon, LIT(TIBSIZE)};
-THREAD(bl) = {Fdocon, LIT(0x20)};
+THREAD(pad) = { Fdocon, padarea };
+THREAD(l0) = { Fdocon, &lstack[LSTACKSIZE - 1] };
+THREAD(s0) = { Fdocon, &pstack[PSTACKSIZE - 1] };
+THREAD(r0) = { Fdocon, &rstack[RSTACKSIZE - 1] };
+THREAD(tib) = { Fdocon, tibarea };
+THREAD(tibsize) = { Fdocon, LIT(TIBSIZE) };
+THREAD(bl) = { Fdocon, LIT(0x20) };
 
-THREAD(zero) = {Fdocon, LIT(0)};
-THREAD(one) = {Fdocon, LIT(1)};
-THREAD(two) = {Fdocon, LIT(2)};
-THREAD(three) = {Fdocon, LIT(3)};
-THREAD(minusone) = {Fdocon, LIT(-1)};
+THREAD(zero) = { Fdocon, LIT(0) };
+THREAD(one) = { Fdocon, LIT(1) };
+THREAD(two) = { Fdocon, LIT(2) };
+THREAD(three) = { Fdocon, LIT(3) };
+THREAD(minusone) = { Fdocon, LIT(-1) };
 
 /* TO BE SUPPLIED */
-#define TBD(name) const void *T##name[] = {Fenter, Texit}
+#define TBD(name) const void *T##name[] = { Fenter, Texit }
 
 /* CPU DEPENDENCIES */
 
-THREAD(cell) = {Fdocon, LIT(CELL)};
-THREAD(chars) = {Fenter, Texit}; /* no operation */
+THREAD(cell) = { Fdocon, LIT(CELL) };
+THREAD(chars) = { Fenter, Texit }; /* no operation */
 
 /* DICTIONARY MANAGEMENT */
 
-THREAD(here) = {Fenter, Tdp, Tfetch, Texit};
-THREAD(allot) = {Fenter, Tdp, Tplusstore, Texit};
-THREAD(comma) = {Fenter, There, Tstore, Tcell, Tallot, Texit};
-THREAD(ccomma) = {Fenter, There, Tcstore, Tone, Tchars, Tallot, Texit};
+THREAD(here) = { Fenter, Tdp, Tfetch, Texit };
+THREAD(allot) = { Fenter, Tdp, Tplusstore, Texit };
+THREAD(comma) = { Fenter, There, Tstore, Tcell, Tallot, Texit };
+THREAD(ccomma) = { Fenter, There, Tcstore, Tone, Tchars, Tallot, Texit };
 
 /* synonyms for unified code and data space */
 #define Tidp Tdp
@@ -767,117 +817,118 @@ THREAD(ccomma) = {Fenter, There, Tcstore, Tone, Tchars, Tallot, Texit};
 /* CPU DEPENDENCIES */
 
 /* cell alignment */
-THREAD(aligned) = {Fenter,    Tcell, Tover, Tminus, Tcell,
-                   Toneminus, Tand,  Tplus, Texit};
-THREAD(align) = {Fenter, Tihere, Taligned, Tidp, Tstore, Texit};
-THREAD(cellplus) = {Fenter, Tcell, Tplus, Texit};
-THREAD(charplus) = {Fenter, Tone, Tplus, Texit};
+THREAD(aligned) = { Fenter, Tcell, Tover, Tminus, Tcell,
+                    Toneminus, Tand, Tplus, Texit };
+THREAD(align) = { Fenter, Tihere, Taligned, Tidp, Tstore, Texit };
+THREAD(cellplus) = { Fenter, Tcell, Tplus, Texit };
+THREAD(charplus) = { Fenter, Tone, Tplus, Texit };
 
 /* >BODY is entered with CFA on stack.  For most words, body is
  * CFA + 1 cell.  For words built with CREATE or CREATE..DOES> ,
  * body is CFA + 2 cells. */
 THREAD(tobody) = {
-    Fenter,   Tdup,      Tifetch,                /* fetch code field */
-    Tdup,     Tlit,      Fdocreate, Tequal,      /* if it's Fdocreate */
-    Tswap,    Tlit,      Fdobuilds, Tequal, Tor, /* or Fdobuilds */
-    Tqbranch, OFFSET(3), Tcell,     Tplus,       /* then add an extra cell */
-    Tcell,    Tplus,     Texit};
+  Fenter, Tdup, Tifetch,               /* fetch code field */
+  Tdup, Tlit, Fdocreate, Tequal,       /* if it's Fdocreate */
+  Tswap, Tlit, Fdobuilds, Tequal, Tor, /* or Fdobuilds */
+  Tqbranch, OFFSET(3), Tcell, Tplus,   /* then add an extra cell */
+  Tcell, Tplus, Texit
+};
 
-THREAD(commaxt) = {Fenter, Ticomma, Texit};
-THREAD(storecf) = {Fenter, Tistore, Texit};
-THREAD(commacf) = {Fenter, Tihere, Tstorecf, Tcell, Tiallot, Texit};
-THREAD(commaexit) = {Fenter, Tlit, Texit, Tcommaxt, Texit};
+THREAD(commaxt) = { Fenter, Ticomma, Texit };
+THREAD(storecf) = { Fenter, Tistore, Texit };
+THREAD(commacf) = { Fenter, Tihere, Tstorecf, Tcell, Tiallot, Texit };
+THREAD(commaexit) = { Fenter, Tlit, Texit, Tcommaxt, Texit };
 
 /* the c model uses relative addressing from the location of the
  * offset cell */
-THREAD(commabranch) = {Fenter, Ticomma, Texit};
-THREAD(commadest) = {Fenter, Tihere, Tminus, Ticomma, Texit};
-THREAD(storedest) = {Fenter, Ttuck, Tminus, Tswap, Tistore, Texit};
-THREAD(commanone) = {Fenter, Tcell, Tiallot, Texit};
+THREAD(commabranch) = { Fenter, Ticomma, Texit };
+THREAD(commadest) = { Fenter, Tihere, Tminus, Ticomma, Texit };
+THREAD(storedest) = { Fenter, Ttuck, Tminus, Tswap, Tistore, Texit };
+THREAD(commanone) = { Fenter, Tcell, Tiallot, Texit };
 
 /* DOUBLE OPERATORS */
 
-THREAD(twofetch) = {Fenter, Tdup, Tcellplus, Tfetch, Tswap, Tfetch, Texit};
-THREAD(twostore) = {Fenter, Tswap, Tover, Tstore, Tcellplus, Tstore, Texit};
-THREAD(twodrop) = {Fenter, Tdrop, Tdrop, Texit};
-THREAD(twodup) = {Fenter, Tover, Tover, Texit};
-THREAD(twoswap) = {Fenter, Trot, Ttor, Trot, Trfrom, Texit};
-THREAD(twoover) = {Fenter, Ttor,   Ttor,     Ttwodup,
-                   Trfrom, Trfrom, Ttwoswap, Texit};
+THREAD(twofetch) = { Fenter, Tdup, Tcellplus, Tfetch, Tswap, Tfetch, Texit };
+THREAD(twostore) = { Fenter, Tswap, Tover, Tstore, Tcellplus, Tstore, Texit };
+THREAD(twodrop) = { Fenter, Tdrop, Tdrop, Texit };
+THREAD(twodup) = { Fenter, Tover, Tover, Texit };
+THREAD(twoswap) = { Fenter, Trot, Ttor, Trot, Trfrom, Texit };
+THREAD(twoover) = { Fenter, Ttor, Ttor, Ttwodup,
+                    Trfrom, Trfrom, Ttwoswap, Texit };
 
 /* ARITHMETIC OPERATORS */
 
-THREAD(stod) = {Fenter, Tdup, Tzeroless, Texit};
-THREAD(qnegate) = {Fenter, Tzeroless, Tqbranch, OFFSET(2), Tnegate, Texit};
-THREAD(abs) = {Fenter, Tdup, Tqnegate, Texit};
-THREAD(dnegate) = {Fenter, Tswap, Tinvert, Tswap, Tinvert, Tone, Tmplus, Texit};
-THREAD(qdnegate) = {Fenter, Tzeroless, Tqbranch, OFFSET(2), Tdnegate, Texit};
-THREAD(dabs) = {Fenter, Tdup, Tqdnegate, Texit};
+THREAD(stod) = { Fenter, Tdup, Tzeroless, Texit };
+THREAD(qnegate) = { Fenter, Tzeroless, Tqbranch, OFFSET(2), Tnegate, Texit };
+THREAD(abs) = { Fenter, Tdup, Tqnegate, Texit };
+THREAD(dnegate) = { Fenter, Tswap, Tinvert, Tswap, Tinvert, Tone, Tmplus, Texit };
+THREAD(qdnegate) = { Fenter, Tzeroless, Tqbranch, OFFSET(2), Tdnegate, Texit };
+THREAD(dabs) = { Fenter, Tdup, Tqdnegate, Texit };
 
-THREAD(mstar) = {Fenter, Ttwodup, Txor,    Ttor,   Tswap,     Tabs,
-                 Tswap,  Tabs,    Tumstar, Trfrom, Tqdnegate, Texit};
-THREAD(smslashrem) = {Fenter, Ttwodup,  Txor,  Ttor,   Tover,       Ttor,
-                      Tabs,   Ttor,     Tdabs, Trfrom, Tumslashmod, Tswap,
-                      Trfrom, Tqnegate, Tswap, Trfrom, Tqnegate,    Texit};
-THREAD(fmslashmod) = {Fenter,
-                      Tdup,
-                      Ttor,
-                      Ttwodup,
-                      Txor,
-                      Ttor,
-                      Ttor,
-                      Tdabs,
-                      Trfetch,
-                      Tabs,
-                      Tumslashmod,
-                      Tswap,
-                      Trfrom,
-                      Tqnegate,
-                      Tswap,
-                      Trfrom,
-                      Tzeroless,
-                      Tqbranch,
-                      OFFSET(10),
-                      Tnegate,
-                      Tover,
-                      Tqbranch,
-                      OFFSET(6),
-                      Trfetch,
-                      Trot,
-                      Tminus,
-                      Tswap,
-                      Toneminus,
-                      /* branch dest */ Trfrom,
-                      Tdrop,
-                      Texit};
-THREAD(star) = {Fenter, Tmstar, Tdrop, Texit};
-THREAD(slashmod) = {Fenter, Ttor, Tstod, Trfrom, Tfmslashmod, Texit};
-THREAD(slash) = {Fenter, Tslashmod, Tnip, Texit};
-THREAD(mod) = {Fenter, Tslashmod, Tdrop, Texit};
-THREAD(starslashmod) = {Fenter, Ttor, Tmstar, Trfrom, Tfmslashmod, Texit};
-THREAD(starslash) = {Fenter, Tstarslashmod, Tnip, Texit};
-THREAD(max) = {Fenter,    Ttwodup, Tless, Tqbranch,
-               OFFSET(2), Tswap,   Tdrop, Texit};
-THREAD(min) = {Fenter,    Ttwodup, Tgreater, Tqbranch,
-               OFFSET(2), Tswap,   Tdrop,    Texit};
-THREAD(umax) = {Fenter,    Ttwodup, Tuless, Tqbranch,
-                OFFSET(2), Tswap,   Tdrop,  Texit};
-THREAD(umin) = {Fenter,    Ttwodup, Tugreater, Tqbranch,
-                OFFSET(2), Tswap,   Tdrop,     Texit};
+THREAD(mstar) = { Fenter, Ttwodup, Txor, Ttor, Tswap, Tabs,
+                  Tswap, Tabs, Tumstar, Trfrom, Tqdnegate, Texit };
+THREAD(smslashrem) = { Fenter, Ttwodup, Txor, Ttor, Tover, Ttor,
+                       Tabs, Ttor, Tdabs, Trfrom, Tumslashmod, Tswap,
+                       Trfrom, Tqnegate, Tswap, Trfrom, Tqnegate, Texit };
+THREAD(fmslashmod) = { Fenter,
+                       Tdup,
+                       Ttor,
+                       Ttwodup,
+                       Txor,
+                       Ttor,
+                       Ttor,
+                       Tdabs,
+                       Trfetch,
+                       Tabs,
+                       Tumslashmod,
+                       Tswap,
+                       Trfrom,
+                       Tqnegate,
+                       Tswap,
+                       Trfrom,
+                       Tzeroless,
+                       Tqbranch,
+                       OFFSET(10),
+                       Tnegate,
+                       Tover,
+                       Tqbranch,
+                       OFFSET(6),
+                       Trfetch,
+                       Trot,
+                       Tminus,
+                       Tswap,
+                       Toneminus,
+                       /* branch dest */ Trfrom,
+                       Tdrop,
+                       Texit };
+THREAD(star) = { Fenter, Tmstar, Tdrop, Texit };
+THREAD(slashmod) = { Fenter, Ttor, Tstod, Trfrom, Tfmslashmod, Texit };
+THREAD(slash) = { Fenter, Tslashmod, Tnip, Texit };
+THREAD(mod) = { Fenter, Tslashmod, Tdrop, Texit };
+THREAD(starslashmod) = { Fenter, Ttor, Tmstar, Trfrom, Tfmslashmod, Texit };
+THREAD(starslash) = { Fenter, Tstarslashmod, Tnip, Texit };
+THREAD(max) = { Fenter, Ttwodup, Tless, Tqbranch,
+                OFFSET(2), Tswap, Tdrop, Texit };
+THREAD(min) = { Fenter, Ttwodup, Tgreater, Tqbranch,
+                OFFSET(2), Tswap, Tdrop, Texit };
+THREAD(umax) = { Fenter, Ttwodup, Tuless, Tqbranch,
+                 OFFSET(2), Tswap, Tdrop, Texit };
+THREAD(umin) = { Fenter, Ttwodup, Tugreater, Tqbranch,
+                 OFFSET(2), Tswap, Tdrop, Texit };
 
 /* CPU DEPENDENCIES CONT'D. */
 
-THREAD(cells) = {Fenter, Tcell, Tstar, Texit};
-THREAD(storecolon) = {Fenter, Ttwo,   Tcells,   Tnegate, Tiallot,
-                      Tlit,   Fenter, Tcommacf, Texit};
+THREAD(cells) = { Fenter, Tcell, Tstar, Texit };
+THREAD(storecolon) = { Fenter, Ttwo, Tcells, Tnegate, Tiallot,
+                       Tlit, Fenter, Tcommacf, Texit };
 
 /* INPUT/OUTPUT */
 
-THREAD(count) = {Fenter, Tdup, Tcharplus, Tswap, Tcfetch, Texit};
-THREAD(cr) = {Fenter, Tlit, LIT(0x0d), Temit, Tlit, LIT(0x0a), Temit, Texit};
-THREAD(space) = {Fenter, Tlit, LIT(0x20), Temit, Texit};
-THREAD(spaces) = {Fenter,    Tdup,    Tqbranch,   OFFSET(5), Tspace,
-                  Toneminus, Tbranch, OFFSET(-6), Tdrop,     Texit};
+THREAD(count) = { Fenter, Tdup, Tcharplus, Tswap, Tcfetch, Texit };
+THREAD(cr) = { Fenter, Tlit, LIT(0x0d), Temit, Tlit, LIT(0x0a), Temit, Texit };
+THREAD(space) = { Fenter, Tlit, LIT(0x20), Temit, Texit };
+THREAD(spaces) = { Fenter, Tdup, Tqbranch, OFFSET(5), Tspace,
+                   Toneminus, Tbranch, OFFSET(-6), Tdrop, Texit };
 
 #ifdef pqrsLINUX
 #define NEWLINE 0x0a
@@ -890,377 +941,378 @@ THREAD(spaces) = {Fenter,    Tdup,    Tqbranch,   OFFSET(5), Tspace,
 #define BACKUP 8     /* what to emit for backspace */
 #endif
 
-THREAD(accept) = {Fenter,
-                  Tover,
-                  Tplus,
-                  Toneminus,
-                  Tover,
-                  /* 1 */ Tkey,
-                  Tdup,
-                  Tlit,
-                  LIT(NEWLINE),
-                  Tnotequal,
-                  Tqbranch,
-                  OFFSET(27 /*5*/),
-                  Tdup,
-                  Tlit,
-                  LIT(BACKSPACE),
-                  Tequal,
-                  Tqbranch,
-                  OFFSET(12 /*3*/),
-                  Tdrop,
-                  Tlit,
-                  LIT(BACKUP),
-                  Temit,
-                  Toneminus,
-                  Ttor,
-                  Tover,
-                  Trfrom,
-                  Tumax,
-                  Tbranch,
-                  OFFSET(8 /*4*/),
-                  /* 3 */ Tdup,
-                  Temit,
-                  Tover,
-                  Tcstore,
-                  Toneplus,
-                  Tover,
-                  Tumin,
-                  /* 4 */ Tbranch,
-                  OFFSET(-32 /*1*/),
-                  /* 5 */ Tdrop,
-                  Tnip,
-                  Tswap,
-                  Tminus,
-                  Texit};
+THREAD(accept) = { Fenter,
+                   Tover,
+                   Tplus,
+                   Toneminus,
+                   Tover,
+                   /* 1 */ Tkey,
+                   Tdup,
+                   Tlit,
+                   LIT(NEWLINE),
+                   Tnotequal,
+                   Tqbranch,
+                   OFFSET(27 /*5*/),
+                   Tdup,
+                   Tlit,
+                   LIT(BACKSPACE),
+                   Tequal,
+                   Tqbranch,
+                   OFFSET(12 /*3*/),
+                   Tdrop,
+                   Tlit,
+                   LIT(BACKUP),
+                   Temit,
+                   Toneminus,
+                   Ttor,
+                   Tover,
+                   Trfrom,
+                   Tumax,
+                   Tbranch,
+                   OFFSET(8 /*4*/),
+                   /* 3 */ Tdup,
+                   Temit,
+                   Tover,
+                   Tcstore,
+                   Toneplus,
+                   Tover,
+                   Tumin,
+                   /* 4 */ Tbranch,
+                   OFFSET(-32 /*1*/),
+                   /* 5 */ Tdrop,
+                   Tnip,
+                   Tswap,
+                   Tminus,
+                   Texit };
 
-THREAD(type) = {Fenter,
-                Tqdup,
-                Tqbranch,
-                OFFSET(12 /*4*/),
-                Tover,
-                Tplus,
-                Tswap,
-                Txdo,
-                /* 3 */ Ti,
-                Tcfetch,
-                Temit,
-                Txloop,
-                OFFSET(-4 /*3*/),
-                Tbranch,
-                OFFSET(2 /*5*/),
-                /* 4 */ Tdrop,
-                /* 5 */ Texit};
+THREAD(type) = { Fenter,
+                 Tqdup,
+                 Tqbranch,
+                 OFFSET(12 /*4*/),
+                 Tover,
+                 Tplus,
+                 Tswap,
+                 Txdo,
+                 /* 3 */ Ti,
+                 Tcfetch,
+                 Temit,
+                 Txloop,
+                 OFFSET(-4 /*3*/),
+                 Tbranch,
+                 OFFSET(2 /*5*/),
+                 /* 4 */ Tdrop,
+                 /* 5 */ Texit };
 
 #define Ticount Tcount
 #define Titype Ttype
 
 /* NUMERIC OUTPUT */
 
-THREAD(udslashmod) = {Fenter, Ttor,   Tzero,       Trfetch, Tumslashmod, Trot,
-                      Trot,   Trfrom, Tumslashmod, Trot,    Texit};
-THREAD(udstar) = {Fenter, Tdup,    Ttor, Tumstar, Tdrop, Tswap,
-                  Trfrom, Tumstar, Trot, Tplus,   Texit};
+THREAD(udslashmod) = { Fenter, Ttor, Tzero, Trfetch, Tumslashmod, Trot,
+                       Trot, Trfrom, Tumslashmod, Trot, Texit };
+THREAD(udstar) = { Fenter, Tdup, Ttor, Tumstar, Tdrop, Tswap,
+                   Trfrom, Tumstar, Trot, Tplus, Texit };
 
-THREAD(hold) = {Fenter, Tminusone, Thp,     Tplusstore,
-                Thp,    Tfetch,    Tcstore, Texit};
-THREAD(lessnum) = {Fenter, Tlit, &holdarea[HOLDSIZE - 1], Thp, Tstore, Texit};
-THREAD(todigit) = {Fenter, Tdup,  Tlit, LIT(9),    Tgreater, Tlit, LIT(7),
-                   Tand,   Tplus, Tlit, LIT(0x30), Tplus,    Texit};
-THREAD(num) = {Fenter, Tbase,    Tfetch, Tudslashmod,
-               Trot,   Ttodigit, Thold,  Texit};
-THREAD(nums) = {Fenter,     Tnum,     Ttwodup,    Tor,
-                Tzeroequal, Tqbranch, OFFSET(-5), Texit};
-THREAD(numgreater) = {Fenter, Ttwodrop, Thp,
-                      Tfetch, Tlit,     &holdarea[HOLDSIZE - 1],
-                      Tover,  Tminus,   Texit};
-THREAD(sign) = {Fenter, Tzeroless, Tqbranch, OFFSET(4),
-                Tlit,   LIT(0x2d), Thold,    Texit};
-THREAD(udot) = {Fenter,      Tlessnum, Tzero,  Tnums,
-                Tnumgreater, Ttype,    Tspace, Texit};
-THREAD(dot) = {Fenter, Tlessnum, Tdup,        Tabs,  Tzero,  Tnums,
-               Trot,   Tsign,    Tnumgreater, Ttype, Tspace, Texit};
-THREAD(decimal) = {Fenter, Tlit, LIT(10), Tbase, Tstore, Texit};
-THREAD(hex) = {Fenter, Tlit, LIT(16), Tbase, Tstore, Texit};
+THREAD(hold) = { Fenter, Tminusone, Thp, Tplusstore,
+                 Thp, Tfetch, Tcstore, Texit };
+THREAD(lessnum) = { Fenter, Tlit, &holdarea[HOLDSIZE - 1], Thp, Tstore, Texit };
+THREAD(todigit) = { Fenter, Tdup, Tlit, LIT(9), Tgreater, Tlit, LIT(7),
+                    Tand, Tplus, Tlit, LIT(0x30), Tplus, Texit };
+THREAD(num) = { Fenter, Tbase, Tfetch, Tudslashmod,
+                Trot, Ttodigit, Thold, Texit };
+THREAD(nums) = { Fenter, Tnum, Ttwodup, Tor,
+                 Tzeroequal, Tqbranch, OFFSET(-5), Texit };
+THREAD(numgreater) = { Fenter, Ttwodrop, Thp,
+                       Tfetch, Tlit, &holdarea[HOLDSIZE - 1],
+                       Tover, Tminus, Texit };
+THREAD(sign) = { Fenter, Tzeroless, Tqbranch, OFFSET(4),
+                 Tlit, LIT(0x2d), Thold, Texit };
+THREAD(udot) = { Fenter, Tlessnum, Tzero, Tnums,
+                 Tnumgreater, Ttype, Tspace, Texit };
+THREAD(dot) = { Fenter, Tlessnum, Tdup, Tabs, Tzero, Tnums,
+                Trot, Tsign, Tnumgreater, Ttype, Tspace, Texit };
+THREAD(decimal) = { Fenter, Tlit, LIT(10), Tbase, Tstore, Texit };
+THREAD(hex) = { Fenter, Tlit, LIT(16), Tbase, Tstore, Texit };
 
 /* INTERPRETER */
 
-THREAD(source) = {Fenter, Tticksource, Ttwofetch, Texit};
-THREAD(slashstring) = {Fenter, Trot, Tover, Tplus, Trot, Trot, Tminus, Texit};
-THREAD(tocounted) = {Fenter, Ttwodup, Tcstore, Tcharplus, Tswap, Tcmove, Texit};
-THREAD(adrtoin) = {Fenter, Tsource, Trot,  Trot,   Tminus, Tmin,
-                   Tzero,  Tmax,    Ttoin, Tstore, Texit};
-THREAD(parse) = {Fenter, Tsource,  Ttoin,     Tfetch,    Tslashstring,
-                 Tover,  Ttor,     Trot,      Tscan,     Tover,
-                 Tswap,  Tqbranch, OFFSET(2), Tcharplus, Tadrtoin,
-                 Trfrom, Ttuck,    Tminus,    Texit};
-THREAD(word) = {Fenter, Tdup,  Tsource,  Ttoin,  Tfetch,  Tslashstring, Trot,
-                Tskip,  Tdrop, Tadrtoin, Tparse, There,   Ttocounted,   There,
-                Tbl,    Tover, Tcount,   Tplus,  Tcstore, Texit};
+THREAD(source) = { Fenter, Tticksource, Ttwofetch, Texit };
+THREAD(slashstring) = { Fenter, Trot, Tover, Tplus, Trot, Trot, Tminus, Texit };
+THREAD(tocounted) = { Fenter, Ttwodup, Tcstore, Tcharplus, Tswap, Tcmove, Texit };
+THREAD(adrtoin) = { Fenter, Tsource, Trot, Trot, Tminus, Tmin,
+                    Tzero, Tmax, Ttoin, Tstore, Texit };
+THREAD(parse) = { Fenter, Tsource, Ttoin, Tfetch, Tslashstring,
+                  Tover, Ttor, Trot, Tscan, Tover,
+                  Tswap, Tqbranch, OFFSET(2), Tcharplus, Tadrtoin,
+                  Trfrom, Ttuck, Tminus, Texit };
+THREAD(word) = { Fenter, Tdup, Tsource, Ttoin, Tfetch, Tslashstring, Trot,
+                 Tskip, Tdrop, Tadrtoin, Tparse, There, Ttocounted, There,
+                 Tbl, Tover, Tcount, Tplus, Tcstore, Texit };
 
 /* (S") S" ." for unified code/data space */
-THREAD(xsquote) = {Fenter, Trfrom,   Tcount, Ttwodup,
-                   Tplus,  Taligned, Ttor,   Texit};
+THREAD(xsquote) = { Fenter, Trfrom, Tcount, Ttwodup,
+                    Tplus, Taligned, Ttor, Texit };
 
-THREAD(squote) = {Fenter, Tlit,    Txsquote, Tcommaxt, Tlit,   LIT(0x22),
-                  Tword,  Tcfetch, Toneplus, Taligned, Tallot, Texit};
+THREAD(squote) = { Fenter, Tlit, Txsquote, Tcommaxt, Tlit, LIT(0x22),
+                   Tword, Tcfetch, Toneplus, Taligned, Tallot, Texit };
 
 #define Txisquote Txsquote
 #define Tisquote Tsquote
 
-THREAD(dotquote) = {Fenter, Tsquote, Tlit, Ttype, Tcommaxt, Texit};
+THREAD(dotquote) = { Fenter, Tsquote, Tlit, Ttype, Tcommaxt, Texit };
 
 /* Dictionary header [sizes in bytes]:
  *   link[4], cfa[4], flags[1], name[n]
  * Note that link is to the previous name field. */
 
 // THREAD(lfatonfa) = { Fenter, Tlit, LIT(CELL*2 + 1), Tplus, Texit };
-THREAD(nfatolfa) = {Fenter, Tlit, LIT(CELL * 2 + 1), Tminus, Texit};
+THREAD(nfatolfa) = { Fenter, Tlit, LIT(CELL * 2 + 1), Tminus, Texit };
 // THREAD(lfatocfa) = {  Fenter, Tcell, Tplus, Thfetch, Texit };
-THREAD(nfatocfa) = {Fenter, Tlit, LIT(CELL + 1), Tminus, Thfetch, Texit};
-THREAD(immedq) = {Fenter, Toneminus, Thcfetch, Tone, Tand, Texit};
+THREAD(nfatocfa) = { Fenter, Tlit, LIT(CELL + 1), Tminus, Thfetch, Texit };
+THREAD(immedq) = { Fenter, Toneminus, Thcfetch, Tone, Tand, Texit };
 
-THREAD(find) = {Fenter,
-                Tlatest,
-                Tfetch,
-                /*1*/ Ttwodup,
-                Tover,
-                Tcfetch,
-                Tcharplus,
-                Tnequal,
-                Tdup,
-                Tqbranch,
-                OFFSET(5 /*2*/),
-                Tdrop,
-                Tnfatolfa,
-                Thfetch,
-                Tdup,
-                /*2*/ Tzeroequal,
-                Tqbranch,
-                OFFSET(-14 /*1*/),
-                Tdup,
-                Tqbranch,
-                OFFSET(9 /*3*/),
-                Tnip,
-                Tdup,
-                Tnfatocfa,
-                Tswap,
-                Timmedq,
-                Tzeroequal,
-                Tone,
-                Tor,
-                /*3*/ Texit};
+THREAD(find) = { Fenter,
+                 Tlatest,
+                 Tfetch,
+                 /*1*/ Ttwodup,
+                 Tover,
+                 Tcfetch,
+                 Tcharplus,
+                 Tnequal,
+                 Tdup,
+                 Tqbranch,
+                 OFFSET(5 /*2*/),
+                 Tdrop,
+                 Tnfatolfa,
+                 Thfetch,
+                 Tdup,
+                 /*2*/ Tzeroequal,
+                 Tqbranch,
+                 OFFSET(-14 /*1*/),
+                 Tdup,
+                 Tqbranch,
+                 OFFSET(9 /*3*/),
+                 Tnip,
+                 Tdup,
+                 Tnfatocfa,
+                 Tswap,
+                 Timmedq,
+                 Tzeroequal,
+                 Tone,
+                 Tor,
+                 /*3*/ Texit };
 
-THREAD(literal) = {Fenter, Tstate, Tfetch,   Tqbranch, OFFSET(5),
-                   Tlit,   Tlit,   Tcommaxt, Ticomma,  Texit};
+THREAD(literal) = { Fenter, Tstate, Tfetch, Tqbranch, OFFSET(5),
+                    Tlit, Tlit, Tcommaxt, Ticomma, Texit };
 
-THREAD(digitq) = {Fenter, Tdup,       Tlit,     LIT(0x39), Tgreater,
-                  Tlit,   LIT(0x100), Tand,     Tplus,     Tdup,
-                  Tlit,   LIT(0x140), Tgreater, Tlit,      LIT(0x107),
-                  Tand,   Tminus,     Tlit,     LIT(0x30), Tminus,
-                  Tdup,   Tbase,      Tfetch,   Tuless,    Texit};
+THREAD(digitq) = { Fenter, Tdup, Tlit, LIT(0x39), Tgreater,
+                   Tlit, LIT(0x100), Tand, Tplus, Tdup,
+                   Tlit, LIT(0x140), Tgreater, Tlit, LIT(0x107),
+                   Tand, Tminus, Tlit, LIT(0x30), Tminus,
+                   Tdup, Tbase, Tfetch, Tuless, Texit };
 
-THREAD(qsign) = {Fenter, Tover, Tcfetch,      Tlit,      LIT(0x2c),
-                 Tminus, Tdup,  Tabs,         Tone,      Tequal,
-                 Tand,   Tdup,  Tqbranch,     OFFSET(6), Toneplus,
-                 Ttor,   Tone,  Tslashstring, Trfrom,    Texit};
+THREAD(qsign) = { Fenter, Tover, Tcfetch, Tlit, LIT(0x2c),
+                  Tminus, Tdup, Tabs, Tone, Tequal,
+                  Tand, Tdup, Tqbranch, OFFSET(6), Toneplus,
+                  Ttor, Tone, Tslashstring, Trfrom, Texit };
 
-THREAD(tonumber) = {Fenter,
-                    /*1*/ Tdup,   Tqbranch, OFFSET(21 /*3*/),
-                    Tover,        Tcfetch,  Tdigitq,
-                    Tzeroequal,   Tqbranch, OFFSET(3 /*2*/),
-                    Tdrop,        Texit,
-                    /*2*/ Ttor,   Ttwoswap, Tbase,
-                    Tfetch,       Tudstar,  Trfrom,
-                    Tmplus,       Ttwoswap, Tone,
-                    Tslashstring, Tbranch,  OFFSET(-22 /*1*/),
-                    /*3*/ Texit};
+THREAD(tonumber) = { Fenter,
+                     /*1*/ Tdup, Tqbranch, OFFSET(21 /*3*/),
+                     Tover, Tcfetch, Tdigitq,
+                     Tzeroequal, Tqbranch, OFFSET(3 /*2*/),
+                     Tdrop, Texit,
+                     /*2*/ Ttor, Ttwoswap, Tbase,
+                     Tfetch, Tudstar, Trfrom,
+                     Tmplus, Ttwoswap, Tone,
+                     Tslashstring, Tbranch, OFFSET(-22 /*1*/),
+                     /*3*/ Texit };
 
-THREAD(qnumber) = {Fenter,
-                   Tdup,
-                   Tzero,
-                   Tdup,
-                   Trot,
-                   Tcount,
-                   Tqsign,
-                   Ttor,
-                   Ttonumber,
-                   Tqbranch,
-                   OFFSET(7 /*1*/),
-                   Trfrom,
-                   Ttwodrop,
-                   Ttwodrop,
-                   Tzero,
-                   Tbranch,
-                   OFFSET(8 /*3*/),
-                   /*1*/ Ttwodrop,
-                   Tnip,
-                   Trfrom,
-                   Tqbranch,
-                   OFFSET(2 /*2*/),
-                   Tnegate,
-                   /*2*/ Tminusone,
-                   /*3*/ Texit};
+THREAD(qnumber) = { Fenter,
+                    Tdup,
+                    Tzero,
+                    Tdup,
+                    Trot,
+                    Tcount,
+                    Tqsign,
+                    Ttor,
+                    Ttonumber,
+                    Tqbranch,
+                    OFFSET(7 /*1*/),
+                    Trfrom,
+                    Ttwodrop,
+                    Ttwodrop,
+                    Tzero,
+                    Tbranch,
+                    OFFSET(8 /*3*/),
+                    /*1*/ Ttwodrop,
+                    Tnip,
+                    Trfrom,
+                    Tqbranch,
+                    OFFSET(2 /*2*/),
+                    Tnegate,
+                    /*2*/ Tminusone,
+                    /*3*/ Texit };
 
 extern const void *Tabort[]; /* forward reference */
 
-THREAD(interpret) = {Fenter, Tticksource, Ttwostore, Tzero, Ttoin, Tstore,
-                     /*1*/ Tbl, Tword, Tdup, Tcfetch, Tqbranch,
-                     OFFSET(33 /*9*/), Tfind, Tqdup, Tqbranch, OFFSET(14 /*4*/),
-                     Toneplus, Tstate, Tfetch, Tzeroequal, Tor, Tqbranch,
-                     OFFSET(4 /*2*/), Texecute, Tbranch, OFFSET(2 /*3*/),
-                     /*2*/ Tcommaxt,
-                     /*3*/ Tbranch, OFFSET(14 /*8*/),
-                     /*4*/ Tqnumber, Tqbranch, OFFSET(4 /*5*/), Tliteral,
-                     Tbranch, OFFSET(8 /*6*/),
-                     /*5*/ Tcount, Ttype, Tlit, LIT(0x3f), Temit, Tcr, Tabort,
-                     /*6*/
-                     /*8*/ Tbranch, OFFSET(-37 /*1*/),
-                     /*9*/ Tdrop, Texit};
+THREAD(interpret) = { Fenter, Tticksource, Ttwostore, Tzero, Ttoin, Tstore,
+                      /*1*/ Tbl, Tword, Tdup, Tcfetch, Tqbranch,
+                      OFFSET(33 /*9*/), Tfind, Tqdup, Tqbranch, OFFSET(14 /*4*/),
+                      Toneplus, Tstate, Tfetch, Tzeroequal, Tor, Tqbranch,
+                      OFFSET(4 /*2*/), Texecute, Tbranch, OFFSET(2 /*3*/),
+                      /*2*/ Tcommaxt,
+                      /*3*/ Tbranch, OFFSET(14 /*8*/),
+                      /*4*/ Tqnumber, Tqbranch, OFFSET(4 /*5*/), Tliteral,
+                      Tbranch, OFFSET(8 /*6*/),
+                      /*5*/ Tcount, Ttype, Tlit, LIT(0x3f), Temit, Tcr, Tabort,
+                      /*6*/
+                      /*8*/ Tbranch, OFFSET(-37 /*1*/),
+                      /*9*/ Tdrop, Texit };
 
-THREAD(evaluate) = {Fenter, Tticksource, Ttwofetch,   Ttor,      Ttor,  Ttoin,
-                    Tfetch, Ttor,        Tinterpret,  Trfrom,    Ttoin, Tstore,
-                    Trfrom, Trfrom,      Tticksource, Ttwostore, Texit};
+THREAD(evaluate) = { Fenter, Tticksource, Ttwofetch, Ttor, Ttor, Ttoin,
+                     Tfetch, Ttor, Tinterpret, Trfrom, Ttoin, Tstore,
+                     Trfrom, Trfrom, Tticksource, Ttwostore, Texit };
 
 const char okprompt[] = "\003ok ";
 
-THREAD(quit) = {Fenter,        Tl0,
-                Tlp,           Tstore,
-                Tr0,           Trpstore,
-                Tzero,         Tstate,
-                Tstore,
-                /*1*/ Ttib,    Tdup,
-                Ttibsize,      Taccept,
-                Tspace,        Tinterpret,
-                Tcr,           Tstate,
-                Tfetch,        Tzeroequal,
-                Tqbranch,      OFFSET(5 /*2*/),
-                Tlit,          okprompt,
-                Ticount,       Titype,
-                /*2*/ Tbranch, OFFSET(-17 /*1*/)}; // never exits
+THREAD(quit) = { Fenter, Tl0,
+                 Tlp, Tstore,
+                 Tr0, Trpstore,
+                 Tzero, Tstate,
+                 Tstore,
+                 /*1*/ Ttib, Tdup,
+                 Ttibsize, Taccept,
+                 Tspace, Tinterpret,
+                 Tcr, Tstate,
+                 Tfetch, Tzeroequal,
+                 Tqbranch, OFFSET(5 /*2*/),
+                 Tlit, okprompt,
+                 Ticount, Titype,
+                 /*2*/ Tbranch, OFFSET(-17 /*1*/) };  // never exits
 
-THREAD(abort) = {Fenter, Ts0, Tspstore, Tquit};
+THREAD(abort) = { Fenter, Ts0, Tspstore, Tquit };
 
-THREAD(qabort) = {Fenter, Trot,   Tqbranch, OFFSET(3),
-                  Titype, Tabort, Ttwodrop, Texit};
+THREAD(qabort) = { Fenter, Trot, Tqbranch, OFFSET(3),
+                   Titype, Tabort, Ttwodrop, Texit };
 
-THREAD(abortquote) = {Fenter, Tisquote, Tlit, Tqabort, Tcommaxt, Texit};
+THREAD(abortquote) = { Fenter, Tisquote, Tlit, Tqabort, Tcommaxt, Texit };
 
 const char huhprompt[] = "\001?";
 
-THREAD(tick) = {Fenter, Tbl,       Tword,   Tfind,   Tzeroequal,
-                Tlit,   huhprompt, Ticount, Tqabort, Texit};
+THREAD(tick) = { Fenter, Tbl, Tword, Tfind, Tzeroequal,
+                 Tlit, huhprompt, Ticount, Tqabort, Texit };
 
 /* COMPILER */
 
-THREAD(char) = {Fenter, Tbl, Tword, Toneplus, Tcfetch, Texit};
+THREAD(char) = { Fenter, Tbl, Tword, Toneplus, Tcfetch, Texit };
 
-THREAD(bracchar) = {Fenter, Tchar, Tlit, Tlit, Tcommaxt, Ticomma, Texit};
+THREAD(bracchar) = { Fenter, Tchar, Tlit, Tlit, Tcommaxt, Ticomma, Texit };
 
-THREAD(paren) = {Fenter, Tlit, LIT(0x29), Tparse, Ttwodrop, Texit};
+THREAD(paren) = { Fenter, Tlit, LIT(0x29), Tparse, Ttwodrop, Texit };
 
 /* header is  { link-to-nfa, cfa, flags, name }  where default cfa,
  * in unified memory space, is immediately following header */
 
 THREAD(header) = {
-    Fenter, Tlatest,  Tfetch,   Thcomma,           /* link */
-    Thhere, Tcell,    Thallot,                     /* reserve cell for cfa */
-    Tzero,  Thccomma,                              /* flags byte */
-    Thhere, Tlatest,  Tstore,                      /* new latest = nfa */
-    Tbl,    Thword,   Thcfetch, Toneplus, Thallot, /* name field */
-    Talign, Tihere,   Tswap,    Thstore,  Texit};  /* patch cfa cell */
+  Fenter, Tlatest, Tfetch, Thcomma,         /* link */
+  Thhere, Tcell, Thallot,                   /* reserve cell for cfa */
+  Tzero, Thccomma,                          /* flags byte */
+  Thhere, Tlatest, Tstore,                  /* new latest = nfa */
+  Tbl, Thword, Thcfetch, Toneplus, Thallot, /* name field */
+  Talign, Tihere, Tswap, Thstore, Texit
+}; /* patch cfa cell */
 
 /* defined word is { Fdobuilds, Tdoesword, ... }
  * Fdobuilds is installed by DOES> so we can use CREATE or <BUILDS.
  * Both CREATE and <BUILDS should reserve the two cells */
 
-THREAD(create) = {Fenter, Theader,   Tlit,    Fdocreate, Tcommacf,
-                  Tihere, Tcellplus, Ticomma, Texit};
+THREAD(create) = { Fenter, Theader, Tlit, Fdocreate, Tcommacf,
+                   Tihere, Tcellplus, Ticomma, Texit };
 
-THREAD(builds) = {Fenter, Tcreate, Texit}; /* same as CREATE */
+THREAD(builds) = { Fenter, Tcreate, Texit }; /* same as CREATE */
 
-THREAD(variable) = {Fenter,    Theader, Tlit,  Fdovar,  Tcommacf, Tihere,
-                    Tcellplus, Ticomma, Tcell, Tiallot, Texit};
+THREAD(variable) = { Fenter, Theader, Tlit, Fdovar, Tcommacf, Tihere,
+                     Tcellplus, Ticomma, Tcell, Tiallot, Texit };
 /* TODO: this is inline variable. fix for RAM/ROM */
 
-THREAD(constant) = {Fenter, Theader, Tlit, Fdocon, Tcommacf, Ticomma, Texit};
+THREAD(constant) = { Fenter, Theader, Tlit, Fdocon, Tcommacf, Ticomma, Texit };
 
-THREAD(user) = {Fenter, Theader, Tlit, Fdouser, Tcommacf, Ticomma, Texit};
+THREAD(user) = { Fenter, Theader, Tlit, Fdouser, Tcommacf, Ticomma, Texit };
 
 /* defining word thread is
  *   { ...build code... Txdoes, Fenter, ...DOES> code.... }
  *                              \--headless Forth word--/     */
 
-THREAD(xdoes) = {Fenter,    Trfrom,               /* xt of headless doesword */
-                 Tlatest,   Tfetch,    Tnfatocfa, /* cfa of word being built */
-                 Tlit,      Fdobuilds, Tover,
-                 Tstorecf,           /* first cell: Fdobuilds */
-                 Tcellplus, Tistore, /* second cell: xt of doesword */
-                 Texit};
+THREAD(xdoes) = { Fenter, Trfrom,             /* xt of headless doesword */
+                  Tlatest, Tfetch, Tnfatocfa, /* cfa of word being built */
+                  Tlit, Fdobuilds, Tover,
+                  Tstorecf,           /* first cell: Fdobuilds */
+                  Tcellplus, Tistore, /* second cell: xt of doesword */
+                  Texit };
 
-THREAD(does) = {Fenter, Tlit, Txdoes, Tcommaxt, Tlit, Fenter, Ticomma, Texit};
+THREAD(does) = { Fenter, Tlit, Txdoes, Tcommaxt, Tlit, Fenter, Ticomma, Texit };
 
-THREAD(recurse) = {Fenter, Tnewest, Tfetch, Tnfatocfa, Tcommaxt, Texit};
+THREAD(recurse) = { Fenter, Tnewest, Tfetch, Tnfatocfa, Tcommaxt, Texit };
 
-THREAD(leftbracket) = {Fenter, Tzero, Tstate, Tstore, Texit};
+THREAD(leftbracket) = { Fenter, Tzero, Tstate, Tstore, Texit };
 
-THREAD(rightbracket) = {Fenter, Tminusone, Tstate, Tstore, Texit};
+THREAD(rightbracket) = { Fenter, Tminusone, Tstate, Tstore, Texit };
 
-THREAD(hide) = {Fenter,    Tlatest, Tfetch,  Tdup,   Tnewest, Tstore,
-                Tnfatolfa, Thfetch, Tlatest, Tstore, Texit};
+THREAD(hide) = { Fenter, Tlatest, Tfetch, Tdup, Tnewest, Tstore,
+                 Tnfatolfa, Thfetch, Tlatest, Tstore, Texit };
 
-THREAD(reveal) = {Fenter, Tnewest, Tfetch, Tlatest, Tstore, Texit};
+THREAD(reveal) = { Fenter, Tnewest, Tfetch, Tlatest, Tstore, Texit };
 
-THREAD(immediate) = {Fenter, Tone,   Tlatest,  Tfetch, Tone,
-                     Tchars, Tminus, Thcstore, Texit};
+THREAD(immediate) = { Fenter, Tone, Tlatest, Tfetch, Tone,
+                      Tchars, Tminus, Thcstore, Texit };
 
-THREAD(colon) = {Fenter, Tbuilds, Thide, Trightbracket, Tstorecolon, Texit};
+THREAD(colon) = { Fenter, Tbuilds, Thide, Trightbracket, Tstorecolon, Texit };
 
-THREAD(semicolon) = {Fenter, Treveal, Tcommaexit, Tleftbracket, Texit};
+THREAD(semicolon) = { Fenter, Treveal, Tcommaexit, Tleftbracket, Texit };
 
-THREAD(brackettick) = {Fenter, Ttick, Tlit, Tlit, Tcommaxt, Ticomma, Texit};
+THREAD(brackettick) = { Fenter, Ttick, Tlit, Tlit, Tcommaxt, Ticomma, Texit };
 
-THREAD(postpone) = {Fenter,     Tbl,       Tword,      Tfind,    Tdup,
-                    Tzeroequal, Tlit,      huhprompt,  Ticount,  Tqabort,
-                    Tzeroless,  Tqbranch,  OFFSET(10), Tlit,     Tlit,
-                    Tcommaxt,   Ticomma,   Tlit,       Tcommaxt, Tcommaxt,
-                    Tbranch,    OFFSET(2), Tcommaxt,   Texit};
+THREAD(postpone) = { Fenter, Tbl, Tword, Tfind, Tdup,
+                     Tzeroequal, Tlit, huhprompt, Ticount, Tqabort,
+                     Tzeroless, Tqbranch, OFFSET(10), Tlit, Tlit,
+                     Tcommaxt, Ticomma, Tlit, Tcommaxt, Tcommaxt,
+                     Tbranch, OFFSET(2), Tcommaxt, Texit };
 
-THREAD(compile) = {Fenter, Trfrom,  Tdup,     Tcellplus,
-                   Ttor,   Tifetch, Tcommaxt, Texit};
+THREAD(compile) = { Fenter, Trfrom, Tdup, Tcellplus,
+                    Ttor, Tifetch, Tcommaxt, Texit };
 
 /* CONTROL STRUCTURES */
 
-THREAD(if) = {Fenter, Tlit, Tqbranch, Tcommabranch, Tihere, Tcommanone, Texit};
-THREAD(then) = {Fenter, Tihere, Tswap, Tstoredest, Texit};
-THREAD(else) = {Fenter,     Tlit,  Tbranch, Tcommabranch, Tihere,
-                Tcommanone, Tswap, Tthen,   Texit};
-THREAD(begin) = {Fenter, Tihere, Texit};
-THREAD(until) = {Fenter, Tlit, Tqbranch, Tcommabranch, Tcommadest, Texit};
-THREAD(again) = {Fenter, Tlit, Tbranch, Tcommabranch, Tcommadest, Texit};
-THREAD(while) = {Fenter, Tif, Tswap, Texit};
-THREAD(repeat) = {Fenter, Tagain, Tthen, Texit};
+THREAD(if) = { Fenter, Tlit, Tqbranch, Tcommabranch, Tihere, Tcommanone, Texit };
+THREAD(then) = { Fenter, Tihere, Tswap, Tstoredest, Texit };
+THREAD(else) = { Fenter, Tlit, Tbranch, Tcommabranch, Tihere,
+                 Tcommanone, Tswap, Tthen, Texit };
+THREAD(begin) = { Fenter, Tihere, Texit };
+THREAD(until) = { Fenter, Tlit, Tqbranch, Tcommabranch, Tcommadest, Texit };
+THREAD(again) = { Fenter, Tlit, Tbranch, Tcommabranch, Tcommadest, Texit };
+THREAD(while) = { Fenter, Tif, Tswap, Texit };
+THREAD(repeat) = { Fenter, Tagain, Tthen, Texit };
 
-THREAD(tol) = {Fenter, Tcell, Tlp, Tplusstore, Tlp, Tfetch, Tstore, Texit};
-THREAD(lfrom) = {Fenter,  Tlp, Tfetch,     Tfetch, Tcell,
-                 Tnegate, Tlp, Tplusstore, Texit};
-THREAD(do) = {Fenter, Tlit, Txdo, Tcommaxt, Tihere, Tzero, Ttol, Texit};
-THREAD(endloop) = {Fenter,  Tcommabranch, Tcommadest, Tlfrom,
-                   Tqdup,   Tqbranch,     OFFSET(4),  Tthen,
-                   Tbranch, OFFSET(-6),   Texit};
-THREAD(loop) = {Fenter, Tlit, Txloop, Tendloop, Texit};
-THREAD(plusloop) = {Fenter, Tlit, Txplusloop, Tendloop, Texit};
-THREAD(leave) = {Fenter,       Tlit,   Tunloop,    Tcommaxt, Tlit, Tbranch,
-                 Tcommabranch, Tihere, Tcommanone, Ttol,     Texit};
+THREAD(tol) = { Fenter, Tcell, Tlp, Tplusstore, Tlp, Tfetch, Tstore, Texit };
+THREAD(lfrom) = { Fenter, Tlp, Tfetch, Tfetch, Tcell,
+                  Tnegate, Tlp, Tplusstore, Texit };
+THREAD(do) = { Fenter, Tlit, Txdo, Tcommaxt, Tihere, Tzero, Ttol, Texit };
+THREAD(endloop) = { Fenter, Tcommabranch, Tcommadest, Tlfrom,
+                    Tqdup, Tqbranch, OFFSET(4), Tthen,
+                    Tbranch, OFFSET(-6), Texit };
+THREAD(loop) = { Fenter, Tlit, Txloop, Tendloop, Texit };
+THREAD(plusloop) = { Fenter, Tlit, Txplusloop, Tendloop, Texit };
+THREAD(leave) = { Fenter, Tlit, Tunloop, Tcommaxt, Tlit, Tbranch,
+                  Tcommabranch, Tihere, Tcommanone, Ttol, Texit };
 
 /* OTHER OPERATIONS */
 
-THREAD(within) = {Fenter, Tover, Tminus, Ttor, Tminus, Trfrom, Tuless, Texit};
-THREAD(move) = {Fenter,  Ttor,      Ttwodup,  Tswap,     Tdup,   Trfetch,
-                Tplus,   Twithin,   Tqbranch, OFFSET(5), Trfrom, Tcmoveup,
-                Tbranch, OFFSET(3), Trfrom,   Tcmove,    Texit};
-THREAD(depth) = {Fenter, Tspfetch, Ts0, Tswap, Tminus, Tcell, Tslash, Texit};
-THREAD(environmentq) = {Fenter, Ttwodrop, Tzero, Texit};
+THREAD(within) = { Fenter, Tover, Tminus, Ttor, Tminus, Trfrom, Tuless, Texit };
+THREAD(move) = { Fenter, Ttor, Ttwodup, Tswap, Tdup, Trfetch,
+                 Tplus, Twithin, Tqbranch, OFFSET(5), Trfrom, Tcmoveup,
+                 Tbranch, OFFSET(3), Trfrom, Tcmove, Texit };
+THREAD(depth) = { Fenter, Tspfetch, Ts0, Tswap, Tminus, Tcell, Tslash, Texit };
+THREAD(environmentq) = { Fenter, Ttwodrop, Tzero, Texit };
 
 /*
 THREAD() = { Fenter,   Texit };
@@ -1270,21 +1322,35 @@ THREAD() = { Fenter,   Texit };
 
 /* UTILITY WORDS */
 
-THREAD(marker) = {Fenter, Tlatest, Tfetch, Tihere, There, Tbuilds, Ticomma,
-                  Ticomma, Ticomma, Txdoes,
-                  /* DOES> action as a headerless Forth word */
-                  Fenter, Tdup, Tifetch, Tswap, Tcellplus, Tdup, Tifetch, Tswap,
-                  Tcellplus, Tifetch, Tlatest, Tstore, Tidp, Tstore, Tdp,
-                  Tstore, Texit};
+THREAD(marker) = { Fenter, Tlatest, Tfetch, Tihere, There, Tbuilds, Ticomma,
+                   Ticomma, Ticomma, Txdoes,
+                   /* DOES> action as a headerless Forth word */
+                   Fenter, Tdup, Tifetch, Tswap, Tcellplus, Tdup, Tifetch, Tswap,
+                   Tcellplus, Tifetch, Tlatest, Tstore, Tidp, Tstore, Tdp,
+                   Tstore, Texit };
 
 #define Thcount Tcount
 #define Thtype Ttype
 
 THREAD(words) = {
-    Fenter,     Tlatest,  Tfetch,
-    /*1*/ Tdup, Thcount,  Tlit,        LIT(0x7f), Tand,
-    Thtype,     Tspace,   Tnfatolfa,   Thfetch,   Tdup,
-    Tzeroequal, Tqbranch, OFFSET(-12), Tdrop,     Texit,
+  Fenter,
+  Tlatest,
+  Tfetch,
+  /*1*/ Tdup,
+  Thcount,
+  Tlit,
+  LIT(0x7f),
+  Tand,
+  Thtype,
+  Tspace,
+  Tnfatolfa,
+  Thfetch,
+  Tdup,
+  Tzeroequal,
+  Tqbranch,
+  OFFSET(-12),
+  Tdrop,
+  Texit,
 };
 
 /* MAIN ENTRY POINT */
@@ -1292,8 +1358,17 @@ THREAD(words) = {
 const char coldprompt[] = "\042CamelForth in C v0.1 - 14 Feb 2016";
 
 THREAD(cold) = {
-    Fenter, Tuinit,     Tu0,    Tninit, Titod, /* important initialization! */
-    Tlit,   coldprompt, Tcount, Ttype,  Tcr,   Tabort,
+  Fenter,
+  Tuinit,
+  Tu0,
+  Tninit,
+  Titod, /* important initialization! */
+  Tlit,
+  coldprompt,
+  Tcount,
+  Ttype,
+  Tcr,
+  Tabort,
 }; /* Tabort never exits */
 
 /*
@@ -1301,23 +1376,23 @@ THREAD(cold) = {
  */
 
 void interpreter(void) {
-    void (*xt)(void *); /* pointer to code function */
-    void *w, *x;        /* generic pointers */
+  void (*xt)(void *); /* pointer to code function */
+  void *w, *x;        /* generic pointers */
 
-    psp = &pstack[PSTACKSIZE - 1];
-    rsp = &rstack[RSTACKSIZE - 1];
-    ip = &Tcold;
+  psp = &pstack[PSTACKSIZE - 1];
+  rsp = &rstack[RSTACKSIZE - 1];
+  ip = &Tcold;
+  ip += CELL;
+  run = 1; /* set to zero to terminate interpreter */
+  while (run) {
+    // blinker();
+    w = *(void **)ip; /* fetch word address from thread */
     ip += CELL;
-    run = 1; /* set to zero to terminate interpreter */
-    while (run) {
-        // blinker();
-        w = *(void **)ip; /* fetch word address from thread */
-        ip += CELL;
-        x = *(void **)w;    /* fetch function adrs from word def */
-        xt = (void (*)())x; /* too much casting! */
-        w += CELL;
-        (*xt)(w); /* call function w/adrs of word def */
-    }
+    x = *(void **)w;    /* fetch function adrs from word def */
+    xt = (void (*)())x; /* too much casting! */
+    w += CELL;
+    (*xt)(w); /* call function w/adrs of word def */
+  }
 }
 
 /*
@@ -1325,7 +1400,7 @@ void interpreter(void) {
  */
 
 /* first header must be explicitly spelled out for null link */
-const struct Header Hexit = {NULL, Texit, 0, "\004EXIT"};
+const struct Header Hexit = { NULL, Texit, 0, "\004EXIT" };
 
 HEADER(execute, exit, 0, "\007EXECUTE");
 HEADER(lit, execute, 0, "\003lit");
