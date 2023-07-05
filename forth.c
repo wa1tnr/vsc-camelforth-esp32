@@ -653,6 +653,10 @@ CODE(bye) {
   run = 0;
 }
 
+CODE(resethw) {
+  make_it_reset(); // NVIC_SystemReset();
+}
+
 /*
  * HIGH LEVEL WORD DEFINITIONS
  */
@@ -747,6 +751,7 @@ PRIMITIVE(dothhhh);
 PRIMITIVE(dots);
 PRIMITIVE(dump);
 PRIMITIVE(bye);
+PRIMITIVE(resethw);
 
 /* USER VARIABLES */
 
@@ -1652,4 +1657,5 @@ HEADER(dothhhh, dothh, 0, "\005.HHHH");
 HEADER(dots, dothhhh, 0, "\002.S");
 HEADER(dump, dots, 0, "\004DUMP");
 HEADER(words, dump, 0, "\005WORDS");
-HEADER(cold, words, 0, "\004COLD");
+HEADER(resethw, words, 0, "\006RESETT");
+HEADER(cold, resethw, 0, "\004COLD");
