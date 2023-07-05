@@ -2,7 +2,7 @@
 /* Tue  4 Jul 15:25:40 UTC 2023 */
 
 #include "api/Common.h"
-#include "USB/USBAPI.h"
+// #include "USB/USBAPI.h"
 #include <Arduino.h>
 
 #ifdef __cplusplus
@@ -17,7 +17,7 @@ extern "C" {
     // unsigned int *q = p;
     char buffer[12];
     snprintf(buffer, 11, "\n%8x:", p, '\000');
-    SerialUSB.print(buffer);
+    Serial.print(buffer);
   }
 
   void print_each_number(unsigned int *p) {
@@ -25,14 +25,14 @@ extern "C" {
     char buffer[12];
     buffer[0] = '\000';
     snprintf(buffer, 11, "  %8X", *p, '\000');
-    SerialUSB.print(buffer);
+    Serial.print(buffer);
   }
 
   void print_dump_addr(unsigned char *p) {
     char buffer[24];
     buffer[0] = '\000';
     snprintf(buffer, 23, "\n%8x:", p, '\000');  // address at beginning of 16-byte line
-    SerialUSB.print(buffer);
+    Serial.print(buffer);
     // printf("\n%8x:", (unsigned int)p);
   }
 
@@ -41,7 +41,7 @@ extern "C" {
     buffer[0] = '\000';
     snprintf(buffer, 23, " %02x", *p, '\000');
     // printf(" %02x", *p++);
-    SerialUSB.print(buffer);
+    Serial.print(buffer);
   }
 
   /*
@@ -72,17 +72,17 @@ extern "C" {
       ;
     }
     while (!waiting_ch) {
-      bool waiting_now = SerialUSB.available();
+      bool waiting_now = Serial.available();
       waiting_ch = waiting_now;
     }
     if (waiting_ch) {
-      unsigned int ch = SerialUSB.read();
+      unsigned int ch = Serial.read();
       return (unsigned int)ch;
     }
   }
 
   void putch(char c) {
-    SerialUSB.write(c);
+    Serial.write(c);
     // printf("%c", c);
     return;  // doesn't have to do anything
   }
@@ -101,16 +101,22 @@ extern "C" {
     }
   }
 
+void make_it_reset() {
+   NVIC_SystemReset();
+}
+
 #ifdef __cplusplus
 }
 #endif
 
 void talker() {
-  SerialUSB.println("jobs");
+  Serial.println("jobs");
 }
 
 void trapped() {
-  // blinker();
+  for (int count = 7; count > 0; count--) {
+    blinker();
+  }
   // talker();
   interpreter();
   while (-1)
@@ -120,10 +126,10 @@ void trapped() {
 void setup() {
   delay(2200);
   pinMode(LED_BUILTIN, OUTPUT);
-  SerialUSB.begin(115200);
-  // SerialUSB.print("\nCamelforth in C   ");
-  SerialUSB.print("\nspecific to Arduino M0 Pro   ");
-  SerialUSB.println("as in git repo Tue  4 Jul 15:41:21 UTC 2023 a");
+  Serial.begin(115200);
+  // Serial.print("\nCamelforth in C   ");
+  Serial.print("\nspecific to Arduino M0 Pro   ");
+  // SerialUSB.println("as in git repo Tue  4 Jul 15:41:21 UTC 2023 a");
   trapped();
 }
 
