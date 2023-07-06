@@ -18,9 +18,21 @@ void print_message(char * message) {
     Serial.print(buffer);
 }
 
+void print_message_no_nl(char * message) {
+    char buffer[32];
+    snprintf(buffer, 31, "%s", message, '\000');
+    Serial.print(buffer);
+}
+
 void print_the_address(unsigned int *p) {
     char buffer[12];
     snprintf(buffer, 11, "\n%8x:", p, '\000');
+    Serial.print(buffer);
+}
+
+void print_the_addr_no_nl(unsigned int *p) {
+    char buffer[12];
+    snprintf(buffer, 11, "%8x:", p, '\000');
     Serial.print(buffer);
 }
 
@@ -38,7 +50,6 @@ void print_dump_addr(unsigned char *p) {
              '\000'); // address at beginning of 16-byte line
     Serial.print(buffer);
 }
-
 
 void xprint_dumped_char(unsigned char q) {
     unsigned char *r;
