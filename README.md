@@ -1,3 +1,7 @@
+Thu  6 Jul 21:45:22 UTC 2023
+
+NEWS:  DUMP works better and no longer accepts a line count.
+
 Tue  4 Jul 15:25:40 UTC 2023
 
 CamelForth in C
