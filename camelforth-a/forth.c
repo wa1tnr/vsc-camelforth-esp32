@@ -623,72 +623,37 @@ void make_fake_delay() {
 }
 
 CODE(dump) { /* adr n -- */
-    unsigned char *p, *q, c, l;
-    unsigned int n, i;
+    unsigned char *adrs;
+    // unsigned int items;
+    // items = *psp++;
+    adrs = (unsigned char *)*psp++;
 
-    n = *psp++;
-    p = (unsigned char *)*psp++;
-    const unsigned char spc = ' ';
-    const unsigned char dawt = '.';
+    char buffer[10] = "";
+    char *ram;
+    int p = adrs; // 0x200024DC;
+    ram = (char*) p;
+    snprintf(buffer, 9, "%8x", p, '\000');
+    // Serial.print(buffer);
+    print_message_no_nl(buffer);
 
-    int count = 0;
-    for (i = 0; i < n; i++) { // n is how many lines of 16 bytes wanted
-
-        if ((i & 0xf) == 0) { // do this 'if' only for legend on left?
-            //  print_message_no_nl("\n  modulo 16 addr p is: ~>");
-            //  print_dump_addr(p); print_the_addr_no_nl(p);
-            //  print_message_no_nl("<~    "); print_message_no_nl("  p++ is
-            //  ~>");
-            // print_dumped_byte(p++); // only increment of p
-            // print_message("<~   ");
-            print_message_no_nl(" C>");
-            print_dumped_byte_no_nl(c);
-            print_message_no_nl("<C  ");
-
-            count++;
-            if ((count & 0xf0) == 0) {
-                count = 0; // reset
-                count = 0; // reset it - BUG was == not = woah
-                q = p - 0x10;
-                l = spc;
-                print_dumped_char(l);
-                print_dumped_char(l);
-                print_dumped_char(l);
-                // q = p - 0x10;
-                // print_message_no_nl("\n q: "); print_the_addr_no_nl(q);
-                // print_message_no_nl("\n p: "); print_the_addr_no_nl(p);
-                // print_message_no_nl("\n l: "); print_the_addr_no_nl(l);
-                // print_message_no_nl("\n n: "); print_the_addr_no_nl(n);
-                // print_message_no_nl("\n i: "); print_the_addr_no_nl(i);
-                // print_message_no_nl("\n count: "); print_dumped_byte(count);
-                // print_message_no_nl("   that was count.  ");
-                make_fake_delay();
-                for (int ascpos = 16; ascpos > 0; ascpos--) {
-                    c = *q; q++;
-                    if (c > 127) { // was cnvp had two of 'em going
-                        l = dawt;  // c = '.';
-                        unsigned int *r = l;
-                        print_message_no_nl("  >"); print_dumped_char(l);
-                        print_message_no_nl("<  l>127");
-                        break;
-                    } // print_message_no_nl("  FALL THRU  ");
-                    if (c < 32) {
-                        l = dawt;
-                        unsigned int r = l;
-                        print_message_no_nl("  >");
-                        print_dumped_char(l);
-                        print_message_no_nl("<  l<32");
-                        break;
-                    }
-                    unsigned int *r = c;
-                    print_message_no_nl("  >");
-                    print_dumped_char(r);
-                        print_message_no_nl("<  sieve ft");
-                }
-            }          // print_message_no_nl("EXITED the 16-RESET subroutine");
-            count = 0; // reset
-        }
+    for (int i = 0; i < 16; i++) {
+        char c = *ram++;
+        snprintf(buffer, 7, " %2x", (c & 0xff), '\000');
+        print_message_no_nl(buffer);
     }
+    ram = (char*) p;
+
+    snprintf(buffer, 7, "   ", '\000');
+
+    print_message_no_nl(buffer);
+
+    for (int i = 0; i < 16; i++) {
+        buffer[0] = *ram++;
+        if (buffer[0] > 0x7f || buffer[0] < ' ') buffer[0] = '.';
+        buffer[1] = '\0';
+        print_message_no_nl(buffer);
+  }
+  // push(p + 16);
 }
 
 CODE(bye) { run = 0; }
