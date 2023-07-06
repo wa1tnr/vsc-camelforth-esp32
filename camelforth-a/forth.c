@@ -616,7 +616,7 @@ void make_inner_delay_a() {
 void make_fake_delay() {
     // for (volatile int waste = 499; waste > 0; waste--) {
     for (volatile int waste = 499; waste > 0; waste--) {
-        make_inner_delay_a();
+        ; // make_inner_delay_a();
     }
 }
 
@@ -662,7 +662,7 @@ CODE(dump) { /* adr n -- */
             print_message("\n  dawt: ");
             print_message("\n  count: ");
 
-            // make_fake_delay();
+            make_fake_delay();
 
             q = p - 10 ;
             for (int ascpos = 0; ascpos < 17; ascpos++) {
