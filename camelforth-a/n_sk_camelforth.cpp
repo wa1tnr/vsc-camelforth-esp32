@@ -140,7 +140,7 @@ void setup() {
     Serial.println(
         "\n                                 Thu  6 Jul 02:47:55 UTC 2023 c");
     Serial.println("\n\n    rev 9b55d294   shred: e");
-    Serial.println("\n\n   : nd CR DUP DUMP 10 + ;  \ 200024DC next dump "):
+    Serial.println("\n\n   : nd CR DUP DUMP 10 + ;  \ 200024DC next dump ");
     trapped();
 }
 
