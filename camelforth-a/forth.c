@@ -657,19 +657,42 @@ CODE(dump) { /* adr n -- */
             print_dumped_char(c);
             print_dumped_char(c);
 
-            print_message("\n  message to you:\n\n"); // works
-            print_message("\n  q: ");
-            print_message("\n  p: ");
-            print_message("\n  c: ");
-            print_message("\n  n: ");
-            print_message("\n  i: ");
-            print_message("\n  spc: ");
-            print_message("\n  dawt: ");
-            print_message("\n  count: ");
+            print_message("\n  message to you:"); // works
+
+            q = p - 10 ;
+            print_message_no_nl("\n q: ");
+            print_the_addr_no_nl(q);
+            print_message_no_nl(" q printed uninit here");
+
+            print_message_no_nl("\n p: ");
+            print_the_addr_no_nl(p);
+            // print_dump_addr(p);
+
+            print_message_no_nl("\n c: ");
+            print_the_addr_no_nl(c);
+            // print_dump_addr(c);
+
+            print_message_no_nl("\n n: ");
+            print_the_addr_no_nl(n);
+            // print_dump_addr(n);
+
+            print_message_no_nl("\n i: ");
+            print_the_addr_no_nl(i);
+            // print_dump_addr(i);
+
+            print_message_no_nl("\n spc: >");
+            print_dumped_char(c);
+
+            print_message_no_nl("<");
+            print_message_no_nl("\n dawt: >");
+            print_dumped_char(c);
+            print_message_no_nl("<");
+
+            print_message_no_nl("\n count: ");
+            print_dumped_byte(count);
 
             make_fake_delay();
 
-            q = p - 10 ;
             for (int ascpos = 0; ascpos < 17; ascpos++) {
 
                 char * c_ptr;
