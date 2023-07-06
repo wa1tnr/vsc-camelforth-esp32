@@ -604,6 +604,22 @@ CODE(dots) { /* print stack, for testing */
 CODE(xdump) { /* adr n -- */
 }
 
+
+
+void make_inner_delay_a() {
+    // for (volatile int wasted = 49997; wasted > 0; wasted--) {
+    for (volatile int wasted = 4999777; wasted > 0; wasted--) {
+        ; // make_inner_delay_b();
+    }
+}
+
+void make_fake_delay() {
+    // for (volatile int waste = 499; waste > 0; waste--) {
+    for (volatile int waste = 499; waste > 0; waste--) {
+        make_inner_delay_a();
+    }
+}
+
 CODE(dump) { /* adr n -- */
     unsigned char *p, *q, c;
     unsigned int n, i;
@@ -636,7 +652,18 @@ CODE(dump) { /* adr n -- */
             print_dumped_char(c);
             print_dumped_char(c);
 
-            print_message(" message to you "); // works
+            print_message("\n  message to you:\n\n"); // works
+            print_message("\n  q: ");
+            print_message("\n  p: ");
+            print_message("\n  c: ");
+            print_message("\n  n: ");
+            print_message("\n  i: ");
+            print_message("\n  spc: ");
+            print_message("\n  dawt: ");
+            print_message("\n  count: ");
+
+            // make_fake_delay();
+
             q = p - 10 ;
             for (int ascpos = 0; ascpos < 17; ascpos++) {
 
