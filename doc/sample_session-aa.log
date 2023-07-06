@@ -1,0 +1,36 @@
+
+Type [C-|] [C-h] to see available commands
+Terminal ready
+
+specific to Arduino Uno R4 WiFi    vsc-camelforth-uno-r4wifi  
+                                 Thu  6 Jul 21:38:05 UTC 2023
+
+
+    rev a0297bea   shred: a
+
+
+   : nd CR DUP DUMP 10 + ;   200024DC next dump 
+CamelForth in C v0.1 - 14 Feb 2016
+ 
+ok HEX 
+ok : nd CR DUP DUMP 10 + ;  
+ok  
+ok  200024DC 
+ok .S 
+200024dc:  200024DC
+ok 80 - 
+ok nd nd nd nd nd nd nd nd nd nd nd nd 
+2000245c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
+2000246c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
+2000247c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
+2000248c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
+2000249c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
+200024ac  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
+200024bc 10  0  0  0  a  0  0  0  1  0  0  0  3  0  0  0   ................
+200024cc  0  0  0  0 ff ff ff ff ff ff ff ff cc 24  0 20   .............$. 
+200024dc dc 24  0 20  0  0  0  0 6e 64 20 6e 64 20 6e 64   .$. ....nd nd nd
+200024ec 20 6e 64 20 6e 64 20 6e 64 20 6e 64 20 6e 64 20    nd nd nd nd nd 
+200024fc 6e 64 20 6e 64 20 6e 64 20 6e 64  0  0  0  0  0   nd nd nd nd.....
+2000250c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
+ok
+
