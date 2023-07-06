@@ -138,8 +138,8 @@ void setup() {
     Serial.print("\nspecific to Arduino Uno R4 WiFi");
     Serial.print("    vsc-camelforth-uno-r4wifi  ");
     Serial.println(
-        "\n                                 Thu  6 Jul 02:47:55 UTC 2023 c");
-    Serial.println("\n\n    rev 9b55d294   shred: e");
+        "\n                                 Thu  6 Jul 21:38:05 UTC 2023");
+    Serial.println("\n\n    rev a0297bea   shred: a");
     Serial.println("\n\n   : nd CR DUP DUMP 10 + ;  \ 200024DC next dump ");
     trapped();
 }
