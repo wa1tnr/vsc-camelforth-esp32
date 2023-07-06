@@ -7,23 +7,23 @@
  *  Header file for forth.c
  ******
  * LICENSE TERMS
- *  CamelForth in C 
+ *  CamelForth in C
  *  copyright (c) 2016,2017 Bradford J. Rodriguez.
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *  
- *  Commercial inquiries should be directed to the author at 
+ *
+ *  Commercial inquiries should be directed to the author at
  *  115 First St., #105, Collingwood, Ontario L9Y 4W3 Canada
  *  or via email to bj@camelforth.com
  */
@@ -39,7 +39,7 @@
 // #define LINUX                   /* for development under Linux */
 // #define TIVA_C                 /* for use with TI TM4C12x */
 
-/* 
+/*
  * CONFIGURATION PARAMETERS
  */
 
@@ -61,25 +61,27 @@
 
 #ifdef TIVA_C /* why won't TI compiler handle variable string? */
 struct Header {
-  void *link;          /* pointer to previous header */
-  void *cfa;           /* pointer to high level def'n */
-  unsigned char flags; /* immed flag and others */
-  char nfa[13];        /* inline name string */
+    void *link;          /* pointer to previous header */
+    void *cfa;           /* pointer to high level def'n */
+    unsigned char flags; /* immed flag and others */
+    char nfa[13];        /* inline name string */
 };
 #else
 struct Header {
-  void *link;          /* pointer to previous header */
-  void *cfa;           /* pointer to high level def'n */
-  unsigned char flags; /* immed flag and others */
-  char nfa[];          /* inline name string */
+    void *link;          /* pointer to previous header */
+    void *cfa;           /* pointer to high level def'n */
+    unsigned char flags; /* immed flag and others */
+    char nfa[];          /* inline name string */
 };
 #endif
 
-#define HEADER(name, prev, flags, namestring) const struct Header H##name = { (char *)H##prev.nfa, T##name, flags, namestring }
+#define HEADER(name, prev, flags, namestring)                                  \
+    const struct Header H##name = {(char *)H##prev.nfa, T##name, flags,        \
+                                   namestring}
 #define IMMEDIATE 1 /* immediate bit in flags */
 
 #define CODE(name) void F##name(void *pfa)
-#define PRIMITIVE(name) const void *T##name[] = { F##name }
+#define PRIMITIVE(name) const void *T##name[] = {F##name}
 #define THREAD(name) const void *T##name[]
 #define OFFSET(n) (void *)(n * CELL) /* see CELL above, = 4 */
 #define LIT(n) (void *)(n)
