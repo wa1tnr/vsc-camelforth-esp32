@@ -12,13 +12,13 @@ void this_here();
 void interpreter(void);
 extern void this_here_now();
 
-void print_message(char * message) {
+void print_message(char *message) {
     char buffer[32];
     snprintf(buffer, 31, "%s", message, '\000');
     Serial.print(buffer);
 }
 
-void print_message_no_nl(char * message) {
+void print_message_no_nl(char *message) {
     char buffer[32];
     snprintf(buffer, 31, "%s", message, '\000');
     Serial.print(buffer);
@@ -51,19 +51,10 @@ void print_dump_addr(unsigned char *p) {
     Serial.print(buffer);
 }
 
-void xprint_dumped_char(unsigned char q) {
-    unsigned char *r;
-    r = (unsigned char*) q;
-    char buffer[4];
-    buffer[0] = '\000';
-    snprintf(buffer, 3, "%c", r, '\000');
-    Serial.print(buffer);
-}
-
 void print_dumped_char(unsigned char *p) {
     char buffer[24];
     buffer[0] = '\000';
-    snprintf(buffer, 23, " %c", *p, '\000');
+    snprintf(buffer, 23, "%c", p, '\000');
     Serial.print(buffer);
 }
 
@@ -71,6 +62,13 @@ void print_dumped_byte(unsigned char *p) {
     char buffer[24];
     buffer[0] = '\000';
     snprintf(buffer, 23, " %02x", *p, '\000');
+    Serial.print(buffer);
+}
+
+void print_dumped_byte_no_nl(unsigned char *p) {
+    char buffer[5];
+    buffer[0] = '\000';
+    snprintf(buffer, 4, "%02x", *p, '\000');
     Serial.print(buffer);
 }
 
@@ -108,10 +106,10 @@ int getquery(void) {
 
 void blinker() {
     // for (int count = 2; count > 0; count--) {
-        digitalWrite(LED_BUILTIN, 1);
-        delay(70);
-        digitalWrite(LED_BUILTIN, 0);
-        delay(400);
+    digitalWrite(LED_BUILTIN, 1);
+    delay(70);
+    digitalWrite(LED_BUILTIN, 0);
+    delay(400);
     // }
 }
 
