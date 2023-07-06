@@ -606,17 +606,22 @@ CODE(xdump) { /* adr n -- */
 
 
 
+void make_inner_delay_b() {
+    for (volatile int wasting = 9; wasting > 0; wasting--) {
+        ;
+    }
+}
+
 void make_inner_delay_a() {
-    // for (volatile int wasted = 49997; wasted > 0; wasted--) {
-    for (volatile int wasted = 4999777; wasted > 0; wasted--) {
-        ; // make_inner_delay_b();
+    for (volatile int wasted = 4999; wasted > 0; wasted--) {
+        make_inner_delay_b();
     }
 }
 
 void make_fake_delay() {
     // for (volatile int waste = 499; waste > 0; waste--) {
     for (volatile int waste = 499; waste > 0; waste--) {
-        ; // make_inner_delay_a();
+        make_inner_delay_a();
     }
 }
 
