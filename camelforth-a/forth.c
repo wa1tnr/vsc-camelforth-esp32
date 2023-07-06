@@ -631,7 +631,7 @@ CODE(dump) { /* adr n -- */
     char buffer[10] = "";
     char *ram;
     int p = adrs; // 0x200024DC;
-    ram = (char*) p;
+    ram = (char *)p;
     snprintf(buffer, 9, "%8x", p, '\000');
     // Serial.print(buffer);
     print_message_no_nl(buffer);
@@ -641,7 +641,7 @@ CODE(dump) { /* adr n -- */
         snprintf(buffer, 7, " %2x", (c & 0xff), '\000');
         print_message_no_nl(buffer);
     }
-    ram = (char*) p;
+    ram = (char *)p;
 
     snprintf(buffer, 7, "   ", '\000');
 
@@ -649,11 +649,12 @@ CODE(dump) { /* adr n -- */
 
     for (int i = 0; i < 16; i++) {
         buffer[0] = *ram++;
-        if (buffer[0] > 0x7f || buffer[0] < ' ') buffer[0] = '.';
+        if (buffer[0] > 0x7f || buffer[0] < ' ')
+            buffer[0] = '.';
         buffer[1] = '\0';
         print_message_no_nl(buffer);
-  }
-  // push(p + 16);
+    }
+    // push(p + 16);
 }
 
 CODE(bye) { run = 0; }
