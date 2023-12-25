@@ -98,7 +98,7 @@ char getch(void) {
     }
     if (waiting_ch) {
         unsigned int ch = SERIAL_FORTH.read();
-        SERIAL_FORTH.println("DID SEE THIS LINE 101");
+        // SERIAL_FORTH.println("DID SEE THIS LINE 101");
         SERIAL_FORTH.write(ch);
         return (unsigned int)ch;
     }
