@@ -7,3 +7,4 @@ exit 0
 
 arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi ${1}
 arduino-cli compile --fqbn arduino:renesas_uno:minima ${1}
+# vetted 24 Dec 2023 - fine as it - exit 0 <verbs> execution below it.
