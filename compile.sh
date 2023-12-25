@@ -12,11 +12,13 @@ cat << _EOF
 
     RUNNING:
 
-        arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi ${1}
+        arduino-cli compile --fqbn esp32:esp32:esp32 ${1}
+        # arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi ${1}
+        # ESP32 Dev Module     esp32:esp32:esp32
 
 _EOF
 
-    arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi  \
+    arduino-cli compile --fqbn esp32:esp32:esp32 \
          ${LOCAL_ACLI_DIRECTOR_Y_PROJ_ECT}
 
 exit 0

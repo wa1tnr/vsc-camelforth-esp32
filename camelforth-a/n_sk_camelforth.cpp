@@ -3,10 +3,12 @@
 
       // bool waiting_now = SerialUSB.available();
 
-#include "api/Common.h"
+// #include "api/Common.h"
 // what was this for then // #include "USB/USBAPI.h"
 #include <Arduino.h>
 // #define SERIAL_FORTH SerialUSB
+
+// #define SERIAL_FORTH Serial1
 #define SERIAL_FORTH Serial
 
 /* Mon  3 Jul 18:56:20 UTC 2023 */
@@ -96,6 +98,7 @@ char getch(void) {
     }
     if (waiting_ch) {
         unsigned int ch = SERIAL_FORTH.read();
+        SERIAL_FORTH.println("DID SEE THIS LINE 99");
         return (unsigned int)ch;
     }
 }
@@ -111,6 +114,10 @@ int getquery(void) {
     return (0 != 0);
 }
 
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 15
+#endif
+
 void blinker() {
     // for (int count = 2; count > 0; count--) {
     digitalWrite(LED_BUILTIN, 1);
@@ -120,7 +127,8 @@ void blinker() {
     // }
 }
 
-void make_it_reset() { NVIC_SystemReset(); }
+// void make_it_reset() { NVIC_SystemReset(); }
+void make_it_reset() { ; }
 
 #ifdef __cplusplus
 }

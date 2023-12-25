@@ -8,6 +8,9 @@ all:
 install:
 	@./upload.sh
 
+board:
+	@arduino-cli board listall
+
 comm:
 	./cf-fastpico9t-uno_r4_wifi.sh /dev/ttyACM0
 
