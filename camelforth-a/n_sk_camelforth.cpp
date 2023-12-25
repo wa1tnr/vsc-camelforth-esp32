@@ -1,9 +1,15 @@
 /* n_sk_camelforth.cpp */
 /* Thu  6 Jul 02:47:55 UTC 2023 */
 
-// these were swapped 24 Dec 23:50z:
-#include <Arduino.h>
+      // bool waiting_now = SerialUSB.available();
+
 #include "api/Common.h"
+// what was this for then // #include "USB/USBAPI.h"
+#include <Arduino.h>
+// #define SERIAL_FORTH SerialUSB
+#define SERIAL_FORTH Serial
+
+/* Mon  3 Jul 18:56:20 UTC 2023 */
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,32 +22,32 @@ extern void this_here_now();
 void print_message(char *message) {
     char buffer[32];
     snprintf(buffer, 31, "%s", message, '\000');
-    Serial.print(buffer);
+    SERIAL_FORTH.print(buffer);
 }
 
 void print_message_no_nl(char *message) {
     char buffer[32];
     snprintf(buffer, 31, "%s", message, '\000');
-    Serial.print(buffer);
+    SERIAL_FORTH.print(buffer);
 }
 
 void print_the_address(unsigned int *p) {
     char buffer[12];
     snprintf(buffer, 11, "\n%8x:", p, '\000');
-    Serial.print(buffer);
+    SERIAL_FORTH.print(buffer);
 }
 
 void print_the_addr_no_nl(unsigned int *p) {
     char buffer[12];
     snprintf(buffer, 11, "%8x:", p, '\000');
-    Serial.print(buffer);
+    SERIAL_FORTH.print(buffer);
 }
 
 void print_each_number(unsigned int *p) {
     char buffer[12];
     buffer[0] = '\000';
     snprintf(buffer, 11, "  %8X", *p, '\000');
-    Serial.print(buffer);
+    SERIAL_FORTH.print(buffer);
 }
 
 void print_dump_addr(unsigned char *p) {
@@ -49,28 +55,28 @@ void print_dump_addr(unsigned char *p) {
     buffer[0] = '\000';
     snprintf(buffer, 23, "\n%8x:", p,
              '\000'); // address at beginning of 16-byte line
-    Serial.print(buffer);
+    SERIAL_FORTH.print(buffer);
 }
 
 void print_dumped_char(unsigned char *p) {
     char buffer[24];
     buffer[0] = '\000';
     snprintf(buffer, 23, "%c", p, '\000');
-    Serial.print(buffer);
+    SERIAL_FORTH.print(buffer);
 }
 
 void print_dumped_byte(unsigned char *p) {
     char buffer[24];
     buffer[0] = '\000';
     snprintf(buffer, 23, " %02x", *p, '\000');
-    Serial.print(buffer);
+    SERIAL_FORTH.print(buffer);
 }
 
 void print_dumped_byte_no_nl(unsigned char *p) {
     char buffer[5];
     buffer[0] = '\000';
     snprintf(buffer, 4, "%02x", *p, '\000');
-    Serial.print(buffer);
+    SERIAL_FORTH.print(buffer);
 }
 
 /*
@@ -85,11 +91,11 @@ char getch(void) {
     bool waiting_ch = 0;
     // for (int testing = 5; testing > 0; testing--) { ; }
     while (!waiting_ch) {
-        bool waiting_now = Serial.available();
+        bool waiting_now = SERIAL_FORTH.available();
         waiting_ch = waiting_now;
     }
     if (waiting_ch) {
-        unsigned int ch = Serial.read();
+        unsigned int ch = SERIAL_FORTH.read();
         return (unsigned int)ch;
     }
 }
@@ -97,7 +103,7 @@ char getch(void) {
 void putch(unsigned int c) {
     char *q;
     q = (char *)c;
-    Serial.write(q);
+    SERIAL_FORTH.write(q);
 }
 
 int getquery(void) {
@@ -120,7 +126,7 @@ void make_it_reset() { NVIC_SystemReset(); }
 }
 #endif
 
-void talker() { Serial.println("jobs"); }
+void talker() { SERIAL_FORTH.println("jobs"); }
 
 void trapped() {
     for (int count = 3; count > 0; count--) {
@@ -135,15 +141,16 @@ void trapped() {
 void setup() {
     delay(2200);
     pinMode(LED_BUILTIN, OUTPUT);
-    Serial1.begin(115200);
-    Serial1.print("\nspecific to Arduino Uno R4 WiFi");
-    Serial1.print("    vsc-camelforth-uno-r4wifi  ");
-    Serial1.println(
-        "\n                                 Thu  6 Jul 21:38:05 UTC 2023");
-    Serial1.println("\n\n    rev a0297bea   shred: a");
-    Serial1.println("\n\n   : nd CR DUP DUMP 10 + ;  \ 200024DC next dump ");
+    SERIAL_FORTH.begin(115200);
+    SERIAL_FORTH.print("\nspecific to Arduino Uno R4 WiFi");
+    SERIAL_FORTH.print("    vsc-camelforth-uno-r4wifi  ");
+    SERIAL_FORTH.println(
+        "\n                                 Sun 25 Dec 02:52:47 UTC 2023");
+    SERIAL_FORTH.println("\n\n    rev f15e4d0    shred: a   branch: wokwi-ver-aa");
+    SERIAL_FORTH.println("\n\n   : nd CR DUP DUMP 10 + ;  \ 200024DC next dump ");
     // kinda seems like Serial1 is correct here 24 Dec 23z
-    while(-1);
+    // Note: Serial1 was correct for ESP32 not UNO R4 WiFi m likely 25 Dec 23z
+    // while(-1);
     trapped();
 }
 
