@@ -1,0 +1,21 @@
+Mon 25 Dec 18:58:39 UTC 2023
+
+  Keyboard heuristics for backspace-based correction way off
+  for vscode 'Wokwi Terminal' wrt this program's basic
+  functionality.
+
+  Try: print hexadecimal keystrokes to see what the forth interpreter
+  is using as input and perhaps adjust the code to accomodate this
+  unusual environment.
+
+  Expect: no upstream help; to resolve locally. ;)
+
+  Be sure to: adjust so that it only modifies this environment's use
+  of the source code - real targets and text terminals 'do not count'
+  in this (possibly ;)
+
+  Alternate: try another text terminal 'somehow' if possible.  Probably
+  a no-go (using Wokwi Terminal is mandatory in the wokwi vscode
+  extension, is the assumption here).
+
+end.
