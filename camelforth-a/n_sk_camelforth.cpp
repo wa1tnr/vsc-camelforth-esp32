@@ -105,9 +105,23 @@ char getch(void) {
 }
 
 void putch(unsigned int c) {
-    char *q;
-    q = (char *)c;
+    int result = c - 8 ;
+    bool isBackspace = result == 0;
+    bool notBackspace = !isBackspace;
+
+    if (isBackspace) {
+        SERIAL_FORTH.write(0x08);
+        SERIAL_FORTH.write(0x20);
+    }
+
+    if (notBackspace) {
+        SERIAL_FORTH.write(0x08);
+    }
+
+    char q = (char)c;
+
     SERIAL_FORTH.write(q);
+
 }
 
 int getquery(void) {

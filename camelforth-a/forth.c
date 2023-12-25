@@ -585,6 +585,10 @@ CODE(emit) {
 
 #include <stdio.h> /* TODO move this upwards */
 
+CODE(splemit) {
+    putch((char)*psp++);
+}
+
 CODE(emit) {
     printf("%c", *psp++);
     // putch((char)*psp++);
@@ -714,6 +718,7 @@ PRIMITIVE(sequal);
 THREAD(nequal) = { Fsequal };  /* synonym */
     
 PRIMITIVE(key);
+PRIMITIVE(splemit);
 PRIMITIVE(emit);
 PRIMITIVE(keyq);
 // PRIMITIVE(dot);
@@ -891,16 +896,21 @@ THREAD(spaces) = { Fenter, Tdup, Tqbranch, OFFSET(5), Tspace, Toneminus,
 #define BACKUP  8           /* what to emit for backspace */
 #else
 #define NEWLINE 0x0d        /* NEWLINE 0x0d */
-#define BACKSPACE 8         /* key returned for backspace */
-#define BACKUP  8           /* what to emit for backspace */
+#define BACKSPACE 0x7f         /* key returned for backspace */
+// #define BACKUP  8           /* what to emit for backspace */
+#define BACKUP     8           /* what to emit for backspace */
 #endif
-                
+
 THREAD(accept) = { Fenter, Tover, Tplus, Toneminus, Tover,
 /* 1 */  Tkey, Tdup, Tlit, LIT(NEWLINE), Tnotequal, Tqbranch, OFFSET(27 /*5*/),
          Tdup, Tlit, LIT(BACKSPACE), Tequal, Tqbranch, OFFSET(12 /*3*/),
-         Tdrop, Tlit, LIT(BACKUP), Temit, Toneminus, Ttor, Tover, Trfrom, 
+         Tdrop, Tlit, LIT(BACKUP), Tsplemit, Toneminus, Ttor, Tover, Trfrom, 
          Tumax, Tbranch, OFFSET(8 /*4*/),
-/* 3 */  Tdup, Temit, Tover, Tcstore, Toneplus, Tover, Tumin,
+/* 3 */  Tdup,
+
+Tsplemit,
+
+Tover, Tcstore, Toneplus, Tover, Tumin,
 /* 4 */  Tbranch, OFFSET(-32 /*1*/),
 /* 5 */  Tdrop, Tnip, Tswap, Tminus, Texit };
 
