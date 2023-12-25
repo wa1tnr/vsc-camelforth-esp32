@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "author": "Sun  2 Jul 16:18:33 UTC 2023   https://wokwi.com/projects/369156841380202497   wa1tnr",
+  "author": "Sun 24 Dec 23:32:07 UTC 2023   https://wokwi.com/projects/369156841380202497   wa1tnr",
   "editor": "wokwi",
   "parts": [
     {
@@ -11,7 +11,7 @@
       "attrs": {}
     },
     {
-      "type": "wokwi-esp32-devkit-v1",
+      "type": "board-esp32-devkit-c-v4",
       "id": "esp",
       "top": -292.9,
       "left": 71.8,
@@ -39,122 +39,38 @@
     }
   ],
   "connections": [
-    [
-      "bb1:44b.j",
-      "bb1:bn.32",
-      "black",
-      [
-        "v60",
-        "h22"
-      ]
+    [ "esp:TX", "$serialMonitor:RX", "" ],
+    [ "esp:RX", "$serialMonitor:TX", "" ],
+    [ "bb1:44b.j", "bb1:bn.32", "black", [ "v60", "h22" ] ],
+    [ "uno:5V", "bb1:bp.1", "red",
+      [ "h-95", "v355", "h20", "v-5", "h10", "v5" ]
     ],
-    [
-      "uno:5V",
-      "bb1:bp.1",
-      "red",
-      [
-        "h-95",
-        "v355",
-        "h20",
-        "v-5",
-        "h10",
-        "v5"
-      ]
+    [ "uno:GND.2", "bb1:bn.1", "black",
+      [ "h-70", "v341" ]
     ],
-    [
-      "uno:GND.2",
-      "bb1:bn.1",
-      "black",
-      [
-        "h-70",
-        "v341"
-      ]
+    [ "uno:7", "bb1:35t.e", "blue",
+      [ "h68.45", "v236.43", "h81.46" ]
     ],
-    [
-      "uno:7",
-      "bb1:35t.e",
-      "blue",
-      [
-        "h68.45",
-        "v236.43",
-        "h81.46"
-      ]
+    [ "bb1:36t.e", "bb1:44t.a", "green",
+      [ "v6.7", "h24.07", "v-51.06", "h14.33" ]
     ],
-    [
-      "bb1:36t.e",
-      "bb1:44t.a",
-      "green",
-      [
-        "v6.7",
-        "h24.07",
-        "v-51.06",
-        "h14.33"
-      ]
+    [ "led1:A", "bb1:35t.a", "yellow",
+      [ "v0" ]
     ],
-    [
-      "led1:A",
-      "bb1:35t.a",
-      "yellow",
-      [
-        "v0"
-      ]
+    [ "led1:C", "bb1:36t.a", "black", [ "v0" ]
     ],
-    [
-      "led1:C",
-      "bb1:36t.a",
-      "black",
-      [
-        "v0"
-      ]
+    [ "r1:1", "bb1:44t.e", "", [ "$bb" ]
     ],
-    [
-      "r1:1",
-      "bb1:44t.e",
-      "",
-      [
-        "$bb"
-      ]
+    [ "r1:2", "bb1:44b.i", "", [ "$bb" ]
     ],
-    [
-      "r1:2",
-      "bb1:44b.i",
-      "",
-      [
-        "$bb"
-      ]
+    [ "esp:D15", "bb1:35t.c", "green",
+      [ "h28.82", "v126.94", "h33.58", "v30.78", "h15.86" ]
     ],
-    [
-      "esp:D15",
-      "bb1:35t.c",
-      "green",
-      [
-        "h28.82",
-        "v126.94",
-        "h33.58",
-        "v30.78",
-        "h15.86"
-      ]
+    [ "esp:GND.2", "bb1:tn.12", "black",
+      [ "h-28.31", "v115.11", "h20.05" ]
     ],
-    [
-      "esp:GND.2",
-      "bb1:tn.12",
-      "black",
-      [
-        "h-28.31",
-        "v115.11",
-        "h20.05"
-      ]
-    ],
-    [
-      "bb1:tn.50",
-      "bb1:bn.50",
-      "green",
-      [
-        "v-3.54",
-        "h61.23",
-        "v173.08",
-        "h-56.86"
-      ]
+    [ "bb1:tn.50", "bb1:bn.50", "green",
+      [ "v-3.54", "h61.23", "v173.08", "h-56.86" ]
     ]
   ],
   "dependencies": {}
