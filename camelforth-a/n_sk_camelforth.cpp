@@ -1,8 +1,9 @@
 /* n_sk_camelforth.cpp */
 /* Thu  6 Jul 02:47:55 UTC 2023 */
 
-#include "api/Common.h"
+// these were swapped 24 Dec 23:50z:
 #include <Arduino.h>
+#include "api/Common.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -134,13 +135,15 @@ void trapped() {
 void setup() {
     delay(2200);
     pinMode(LED_BUILTIN, OUTPUT);
-    Serial.begin(115200);
-    Serial.print("\nspecific to Arduino Uno R4 WiFi");
-    Serial.print("    vsc-camelforth-uno-r4wifi  ");
-    Serial.println(
+    Serial1.begin(115200);
+    Serial1.print("\nspecific to Arduino Uno R4 WiFi");
+    Serial1.print("    vsc-camelforth-uno-r4wifi  ");
+    Serial1.println(
         "\n                                 Thu  6 Jul 21:38:05 UTC 2023");
-    Serial.println("\n\n    rev a0297bea   shred: a");
-    Serial.println("\n\n   : nd CR DUP DUMP 10 + ;  \ 200024DC next dump ");
+    Serial1.println("\n\n    rev a0297bea   shred: a");
+    Serial1.println("\n\n   : nd CR DUP DUMP 10 + ;  \ 200024DC next dump ");
+    // kinda seems like Serial1 is correct here 24 Dec 23z
+    while(-1);
     trapped();
 }
 
