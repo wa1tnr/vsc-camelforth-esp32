@@ -1,4 +1,9 @@
-### Tue 26 Dec 22:23:51 UTC 2023
+### Tue 26 Dec 22:53:28 UTC 2023
+
+seems very good on wokwi web, worried it is borked
+for vscode, though:
+
+  https://wokwi.com/projects/385217785649688577
 
 light commented:
 
