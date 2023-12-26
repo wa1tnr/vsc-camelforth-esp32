@@ -1061,11 +1061,31 @@ THREAD(evaluate) = { Fenter, Tticksource, Ttwofetch, Ttor, Ttor,
 
 const char okprompt[] = "\003ok ";
 
+
+THREAD(scribble) = { Fenter,
+
+        Tlit, LIT(0x61), Temit,
+        Tlit, LIT(0x62), Temit,
+        Tlit, LIT(0x63), Temit,
+        Tlit, LIT(0x64), Temit,
+        Tlit, LIT(0x65), Temit,
+
+        Tlit, LIT(0x41), Temit,
+        Tlit, LIT(0x42), Temit,
+        Tlit, LIT(0x43), Temit,
+        Tlit, LIT(0x44), Temit,
+        Tlit, LIT(0x45), Temit,
+
+        Texit };
+
 THREAD(quit) = { Fenter, Tl0, Tlp, Tstore,
         Tr0, Trpstore, Tzero, Tstate, Tstore,
 
  /*1*/  Tcr, Ttib, Tdup, Ttibsize, Taccept, Tcr, /* was Tspace */
-Tinterpret,
+
+/* horse has already left the barn */
+
+Tinterpret, Tscribble,
 
         Tcr, Tstate, Tfetch, Tzeroequal, Tqbranch, OFFSET(5 /*2*/), /* was 5 */
 
@@ -1075,7 +1095,7 @@ Tinterpret,
 /* type that ok prompt now - it is counted */
 Ticount, Titype,
 
- /*2*/  Tbranch, OFFSET(-18 /*1*/) };     // never exits /* was -17 */
+ /*2*/  Tbranch, OFFSET(-19 /*1*/) };     // never exits /* was -17 */
 
 THREAD(abort) = { Fenter, Ts0, Tspstore, Tquit };
 
