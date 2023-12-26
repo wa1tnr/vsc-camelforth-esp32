@@ -1,6 +1,10 @@
 Sun 25 Dec 01:21:06 UTC 2023
 
-is:
+exp - wokwi test of vscode-friendly keyboard heuristics:
+
+  https://wokwi.com/projects/385200503426340865
+
+stable / is:
 
   https://wokwi.com/projects/385046318994525185
   
