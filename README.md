@@ -1,4 +1,17 @@
-### Tue 26 Dec 22:17:56 UTC 2023
+### Tue 26 Dec 22:23:51 UTC 2023
+
+light commented:
+
+  https://wokwi.com/projects/385215933871767553
+
+  It 'works' but prints the backspaces which is
+  not wanted.  Not tested on vscode in 90+ minutes.
+
+ - - -
+
+#### legacy comments follow.
+
+ - - -
 
 add switch working in wokwi webbed:
 
