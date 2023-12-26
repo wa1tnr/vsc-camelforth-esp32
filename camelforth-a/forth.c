@@ -932,7 +932,9 @@ Tover, Tcstore, Toneplus, Tover, Tumin,
 
 /* tail gunner: nobody's counting */
 Tcr,
-Tscribble, /* it already has the CR but no LF when this prints so have to use the OS level */
+/*
+Tscribble, */
+/* it already has the CR but no LF when this prints so have to use the OS level */
 
 Texit };
 
@@ -1084,40 +1086,14 @@ THREAD(evaluate) = { Fenter, Tticksource, Ttwofetch, Ttor, Ttor,
 const char okprompt[] = "\003ok ";
 
 
+/* endless loop: */
 THREAD(quit) = { Fenter, Tl0, Tlp, Tstore,
         Tr0, Trpstore, Tzero, Tstate, Tstore,
- /*1*/ Tcr,
- /*1*/  /* Tcr, */ /*  ATTENTION 26 DEC 02:35Z - NOT TESTED! */
-
-/* no idea what the removed Tcr affected yet - brief test showed it was not
-   much if any impact on 5 3 * . 15 ok series. */
-
-/* analysis */
-
-/*
-  IN:
-  type the input line
-      -- press ENTER --
-  OUT:
-  line feeds, and CR (full left carriage, on new line)
-      -- Tscribble (abcdeABCDE)
-      -- and then the effects of the word(s) are printed.
-*/
-
-        Ttib, Tdup, Ttibsize, Taccept, Tspace, /* was Tcr */
-
-/* horse has already left the barn */
-
-Tinterpret,
-
-        Tcr, Tstate, Tfetch, Tzeroequal, Tqbranch, OFFSET(5 /*2*/),
-
-/* BOOKMARK */
-        Tlit, okprompt,
-
-Ticount, Titype,
-
- /*2*/  Tbranch, OFFSET(-18 /*1*/) };     // never exits /* was -17 */
+ /*1*/  Tcr, Ttib, Tdup, Ttibsize,
+        Taccept, Tspace, Tinterpret, Tspace,
+        Tstate, Tfetch, Tzeroequal, Tqbranch, OFFSET(5 /*2*/),
+        Tlit, okprompt, Ticount, Titype,
+ /*2*/  Tbranch, OFFSET(-18 /*1*/) };     /* never exits */
 
 THREAD(abort) = { Fenter, Ts0, Tspstore, Tquit };
 
