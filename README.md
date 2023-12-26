@@ -1,4 +1,8 @@
-### Tue 26 Dec 19:23:46 UTC 2023
+### Tue 26 Dec 20:07:18 UTC 2023
+
+works on wokwi webbed:
+
+  https://wokwi.com/projects/385207337838423041
 
 was: Sun 25 Dec 01:21:06 UTC 2023
 
