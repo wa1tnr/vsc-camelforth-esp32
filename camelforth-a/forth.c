@@ -890,31 +890,12 @@ THREAD(space) = { Fenter, Tlit, LIT(0x20), Temit, Texit };
 THREAD(spaces) = { Fenter, Tdup, Tqbranch, OFFSET(5), Tspace, Toneminus,
                 Tbranch, OFFSET(-6), Tdrop, Texit };
 
-#ifdef LINUX
-#define NEWLINE 0x0a
-#define BACKSPACE 0x7f      /* key returned for backspace */
-#define BACKUP  8           /* what to emit for backspace */
-#else
 #define NEWLINE 0x0d        /* NEWLINE 0x0d */
 #define BACKSPACE 0x7f         /* key returned for backspace */
-// #define BACKUP  8           /* what to emit for backspace */
 #define BACKUP     8           /* what to emit for backspace */
-#endif
 
 THREAD(scribble) = { Fenter,
-
         Tlit, LIT(0x61), Temit,
-        Tlit, LIT(0x62), Temit,
-        Tlit, LIT(0x63), Temit,
-        Tlit, LIT(0x64), Temit,
-        Tlit, LIT(0x65), Temit,
-
-        Tlit, LIT(0x41), Temit,
-        Tlit, LIT(0x42), Temit,
-        Tlit, LIT(0x43), Temit,
-        Tlit, LIT(0x44), Temit,
-        Tlit, LIT(0x45), Temit,
-
         Texit };
 
 THREAD(accept) = { Fenter, Tover, Tplus, Toneminus, Tover,
@@ -922,21 +903,11 @@ THREAD(accept) = { Fenter, Tover, Tplus, Toneminus, Tover,
          Tdup, Tlit, LIT(BACKSPACE), Tequal, Tqbranch, OFFSET(12 /*3*/),
          Tdrop, Tlit, LIT(BACKUP), Tsplemit, Toneminus, Ttor, Tover, Trfrom, 
          Tumax, Tbranch, OFFSET(8 /*4*/),
-/* 3 */  Tdup,
-
-Tsplemit,
-
-Tover, Tcstore, Toneplus, Tover, Tumin,
+/* 3 */  Tdup, Tsplemit, Tover, Tcstore, Toneplus, Tover, Tumin,
 /* 4 */  Tbranch, OFFSET(-32 /*1*/),
 /* 5 */  Tdrop, Tnip, Tswap, Tminus,
-
-/* tail gunner: nobody's counting */
-Tcr,
-/*
-Tscribble, */
-/* it already has the CR but no LF when this prints so have to use the OS level */
-
-Texit };
+         Tcr, /* Tscribble, */
+         Texit };
 
 THREAD(type) = { Fenter, Tqdup, Tqbranch, OFFSET(12 /*4*/),
          Tover, Tplus, Tswap, Txdo,
