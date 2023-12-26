@@ -5,6 +5,8 @@ targettte:	clean
 	@echo
 	@date
 	@echo
+	@sha1sum ./camelforth-a.ino.bin
+	@echo
 
 all:
 
@@ -18,7 +20,6 @@ comm:
 	./cf-fastpico9t-esp32-vsc.sh /dev/ttyACM0
 
 clean:
-	@echo   roger - make clean begins now.
 	rm -rf /tmp/arduino/cores ; rm -rf /tmp/arduino/sketches
 
 # end.
