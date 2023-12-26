@@ -890,9 +890,15 @@ THREAD(space) = { Fenter, Tlit, LIT(0x20), Temit, Texit };
 THREAD(spaces) = { Fenter, Tdup, Tqbranch, OFFSET(5), Tspace, Toneminus,
                 Tbranch, OFFSET(-6), Tdrop, Texit };
 
-#define NEWLINE 0x0d        /* NEWLINE 0x0d */
-#define BACKSPACE 0x7f         /* key returned for backspace */
-#define BACKUP     8           /* what to emit for backspace */
+#ifndef WOKWI_VSCODE
+  #define WOKWI_VSCODE
+#endif
+
+#ifdef WOKWI_VSCODE
+  #define NEWLINE 0x0d        /* NEWLINE 0x0d */
+  #define BACKSPACE 0x7f         /* key returned for backspace */
+  #define BACKUP     8           /* what to emit for backspace */
+#endif // #ifdef WOKWI_VSCODE
 
 THREAD(scribble) = { Fenter,
         Tlit, LIT(0x61), Temit,
