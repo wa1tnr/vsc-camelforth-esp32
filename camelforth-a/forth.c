@@ -944,7 +944,13 @@ THREAD(udot) = { Fenter, Tlessnum, Tzero, Tnums, Tnumgreater, Ttype,
 THREAD(dot) = { Fenter, Tlessnum, Tdup, Tabs, Tzero, Tnums, Trot, Tsign,
                 Tnumgreater, Ttype, Tspace, Texit };
 THREAD(decimal) = { Fenter, Tlit, LIT(10), Tbase, Tstore, Texit };
+
+THREAD(binary) = { Fenter, Tlit, LIT(2), Tbase, Tstore, Texit };
+
+THREAD(octal) = { Fenter, Tlit, LIT(8), Tbase, Tstore, Texit };
+
 THREAD(hex) = { Fenter, Tlit, LIT(16), Tbase, Tstore, Texit };
+
 
 /* INTERPRETER */
 
@@ -1434,8 +1440,11 @@ HEADER(numgreater, nums, 0, "\002#>");
 HEADER(sign, numgreater, 0, "\004SIGN");
 HEADER(udot, sign, 0, "\002u.");
 HEADER(dot, udot, 0, "\001.");
+/* dec bin oct hex 10 2 8 16 */
 HEADER(decimal, dot, 0, "\007decimal");
-HEADER(hex, decimal, 0, "\003hex");
+HEADER(binary, decimal, 0, "\006binary");
+HEADER(octal, binary, 0, "\005octal");
+HEADER(hex, octal, 0, "\003hex");
 HEADER(source, hex, 0, "\006SOURCE");
 HEADER(slashstring, source, 0, "\007/STRING");
 HEADER(tocounted, slashstring, 0, "\010>COUNTED");

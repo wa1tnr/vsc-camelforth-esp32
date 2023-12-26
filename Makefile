@@ -2,6 +2,9 @@
 
 targettte:	clean
 	@./compile.sh
+	@echo
+	@date
+	@echo
 
 all:
 
@@ -15,7 +18,7 @@ comm:
 	./cf-fastpico9t-esp32-vsc.sh /dev/ttyACM0
 
 clean:
-	@echo so this is make clean right here
+	@echo   roger - make clean begins now.
 	rm -rf /tmp/arduino/cores ; rm -rf /tmp/arduino/sketches
 
 # end.
