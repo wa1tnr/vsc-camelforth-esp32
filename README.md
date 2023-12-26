@@ -1,8 +1,15 @@
-Sun 25 Dec 01:21:06 UTC 2023
+### Tue 26 Dec 19:23:46 UTC 2023
+
+was: Sun 25 Dec 01:21:06 UTC 2023
 
 exp - wokwi test of vscode-friendly keyboard heuristics:
 
   https://wokwi.com/projects/385200503426340865
+
+Result: dismal!  Do not do this this way ;)
+Ok: sync'd to current work, so just edit forth.c
+and n_sk_foo.cpp to get it right for wokwi web.
+
 
 stable / is:
 
