@@ -1,4 +1,8 @@
-### Tue 26 Dec 20:07:18 UTC 2023
+### Tue 26 Dec 22:17:56 UTC 2023
+
+add switch working in wokwi webbed:
+
+  https://wokwi.com/projects/385215561541296129
 
 works on wokwi webbed:
 
