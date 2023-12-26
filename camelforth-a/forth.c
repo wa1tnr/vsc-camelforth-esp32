@@ -901,6 +901,22 @@ THREAD(spaces) = { Fenter, Tdup, Tqbranch, OFFSET(5), Tspace, Toneminus,
 #define BACKUP     8           /* what to emit for backspace */
 #endif
 
+THREAD(scribble) = { Fenter,
+
+        Tlit, LIT(0x61), Temit,
+        Tlit, LIT(0x62), Temit,
+        Tlit, LIT(0x63), Temit,
+        Tlit, LIT(0x64), Temit,
+        Tlit, LIT(0x65), Temit,
+
+        Tlit, LIT(0x41), Temit,
+        Tlit, LIT(0x42), Temit,
+        Tlit, LIT(0x43), Temit,
+        Tlit, LIT(0x44), Temit,
+        Tlit, LIT(0x45), Temit,
+
+        Texit };
+
 THREAD(accept) = { Fenter, Tover, Tplus, Toneminus, Tover,
 /* 1 */  Tkey, Tdup, Tlit, LIT(NEWLINE), Tnotequal, Tqbranch, OFFSET(27 /*5*/),
          Tdup, Tlit, LIT(BACKSPACE), Tequal, Tqbranch, OFFSET(12 /*3*/),
@@ -912,7 +928,10 @@ Tsplemit,
 
 Tover, Tcstore, Toneplus, Tover, Tumin,
 /* 4 */  Tbranch, OFFSET(-32 /*1*/),
-/* 5 */  Tdrop, Tnip, Tswap, Tminus, Texit };
+/* 5 */  Tdrop, Tnip, Tswap, Tminus,
+
+Tscribble,
+Texit };
 
 THREAD(type) = { Fenter, Tqdup, Tqbranch, OFFSET(12 /*4*/),
          Tover, Tplus, Tswap, Txdo,
@@ -1062,40 +1081,23 @@ THREAD(evaluate) = { Fenter, Tticksource, Ttwofetch, Ttor, Ttor,
 const char okprompt[] = "\003ok ";
 
 
-THREAD(scribble) = { Fenter,
-
-        Tlit, LIT(0x61), Temit,
-        Tlit, LIT(0x62), Temit,
-        Tlit, LIT(0x63), Temit,
-        Tlit, LIT(0x64), Temit,
-        Tlit, LIT(0x65), Temit,
-
-        Tlit, LIT(0x41), Temit,
-        Tlit, LIT(0x42), Temit,
-        Tlit, LIT(0x43), Temit,
-        Tlit, LIT(0x44), Temit,
-        Tlit, LIT(0x45), Temit,
-
-        Texit };
-
 THREAD(quit) = { Fenter, Tl0, Tlp, Tstore,
         Tr0, Trpstore, Tzero, Tstate, Tstore,
 
- /*1*/  Tcr, Ttib, Tdup, Ttibsize, Taccept, Tcr, /* was Tspace */
+ /*1*/  Tcr, Ttib, Tdup, Ttibsize, Taccept, Tspace, /* was Tcr */
 
 /* horse has already left the barn */
 
-Tinterpret, Tscribble,
+Tinterpret,
 
-        Tcr, Tstate, Tfetch, Tzeroequal, Tqbranch, OFFSET(5 /*2*/), /* was 5 */
+        Tcr, Tstate, Tfetch, Tzeroequal, Tqbranch, OFFSET(5 /*2*/),
 
-        /* modified to print a CR before ok */
+/* BOOKMARK */
         Tlit, okprompt,
 
-/* type that ok prompt now - it is counted */
 Ticount, Titype,
 
- /*2*/  Tbranch, OFFSET(-19 /*1*/) };     // never exits /* was -17 */
+ /*2*/  Tbranch, OFFSET(-18 /*1*/) };     // never exits /* was -17 */
 
 THREAD(abort) = { Fenter, Ts0, Tspstore, Tquit };
 
