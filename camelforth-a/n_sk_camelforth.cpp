@@ -105,6 +105,7 @@ char getch(void) {
 }
 
 void putch(unsigned int c) {
+    /* does NOT see end of line but does see both 0x08 and 0x7f */
     int result = c - 8 ;
     bool isBackspace = result == 0;
     bool notBackspace = !isBackspace;
@@ -119,9 +120,7 @@ void putch(unsigned int c) {
     }
 
     char q = (char)c;
-
     SERIAL_FORTH.write(q);
-
 }
 
 int getquery(void) {
