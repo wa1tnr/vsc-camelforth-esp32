@@ -1063,10 +1063,19 @@ const char okprompt[] = "\003ok ";
 
 THREAD(quit) = { Fenter, Tl0, Tlp, Tstore,
         Tr0, Trpstore, Tzero, Tstate, Tstore,
- /*1*/  Ttib, Tdup, Ttibsize, Taccept, Tspace, Tinterpret,
-        Tcr, Tstate, Tfetch, Tzeroequal, Tqbranch, OFFSET(5 /*2*/),
-        Tlit, okprompt, Ticount, Titype,
- /*2*/  Tbranch, OFFSET(-17 /*1*/) };     // never exits
+
+ /*1*/  Tcr, Ttib, Tdup, Ttibsize, Taccept, Tcr, /* was Tspace */
+Tinterpret,
+
+        Tcr, Tstate, Tfetch, Tzeroequal, Tqbranch, OFFSET(5 /*2*/), /* was 5 */
+
+        /* modified to print a CR before ok */
+        Tlit, okprompt,
+
+/* type that ok prompt now - it is counted */
+Ticount, Titype,
+
+ /*2*/  Tbranch, OFFSET(-18 /*1*/) };     // never exits /* was -17 */
 
 THREAD(abort) = { Fenter, Ts0, Tspstore, Tquit };
 
@@ -1264,11 +1273,11 @@ const struct Header Hexit = {  NULL, Texit, 0, "\004EXIT"  };
 
 HEADER(execute, exit, 0, "\007EXECUTE");
 HEADER(lit, execute, 0, "\003lit");
-HEADER(dup, lit, 0, "\003DUP");
+HEADER(dup, lit, 0, "\003dup");
 HEADER(qdup, dup, 0, "\004?DUP");
-HEADER(drop, qdup, 0, "\004DROP");
-HEADER(swap, drop, 0, "\004SWAP");
-HEADER(over, swap, 0, "\004OVER");
+HEADER(drop, qdup, 0, "\004drop");
+HEADER(swap, drop, 0, "\004swap");
+HEADER(over, swap, 0, "\004over");
 HEADER(rot, over, 0, "\003ROT");
 HEADER(nip, rot, 0, "\003NIP");
 HEADER(tuck, nip, 0, "\004TUCK");
@@ -1300,11 +1309,11 @@ HEADER(mplus, plusstore, 0, "\002M+");
 HEADER(minus, mplus, 0, "\001-");
 HEADER(mult, minus, 0, "\001*");
 HEADER(div, mult, 0, "\001/");
-HEADER(and, div, 0, "\003AND");
-HEADER(or, and, 0, "\002OR");
-HEADER(xor, or, 0, "\003XOR");
-HEADER(invert, xor, 0, "\006INVERT");
-HEADER(negate, invert, 0, "\006NEGATE");
+HEADER(and, div, 0, "\003and");
+HEADER(or, and, 0, "\002or");
+HEADER(xor, or, 0, "\003xor");
+HEADER(invert, xor, 0, "\006invert");
+HEADER(negate, invert, 0, "\006negate");
 HEADER(oneplus, negate, 0, "\0021+");
 HEADER(oneminus, oneplus, 0, "\0021-");
 HEADER(swapbytes, oneminus, 0, "\002><");
@@ -1345,12 +1354,12 @@ HEADER(nequal, sequal, 0, "\002N=");
 HEADER(key, nequal, 0, "\003KEY");
 HEADER(emit, key, 0, "\004EMIT");
 HEADER(keyq, emit, 0, "\004KEY?");
-HEADER(bye, keyq, 0, "\003BYE");
+HEADER(bye, keyq, 0, "\003bye");
 
 /* high level definitions */
 HEADER(u0, bye, 0, "\002U0");
 HEADER(toin, u0, 0, "\003>IN");
-HEADER(base, toin, 0, "\004BASE");
+HEADER(base, toin, 0, "\004base");
 HEADER(state, base, 0, "\005STATE");
 HEADER(dp, state, 0, "\002DP");
 HEADER(ticksource, dp, 0, "\007'SOURCE");
@@ -1365,7 +1374,7 @@ HEADER(pad, ninit, 0, "\003PAD");
 HEADER(l0, pad, 0, "\002L0");
 HEADER(s0, l0, 0, "\002S0");
 HEADER(r0, s0, 0, "\002R0");
-HEADER(tib, r0, 0, "\003TIB");
+HEADER(tib, r0, 0, "\003tib");
 HEADER(tibsize, tib, 0, "\007TIBSIZE");
 HEADER(bl, tibsize, 0, "\002BL");
 HEADER(zero, bl, 0, "\0010");
@@ -1375,7 +1384,7 @@ HEADER(three, two, 0, "\0013");
 HEADER(minusone, three, 0, "\002-1");
 HEADER(cell, minusone, 0, "\004CELL");
 HEADER(chars, cell, 0, "\005CHARS");
-HEADER(here, chars, 0, "\004HERE");
+HEADER(here, chars, 0, "\004here");
 HEADER(allot, here, 0, "\005ALLOT");
 HEADER(comma, allot, 0, "\001,");
 HEADER(ccomma, comma, 0, "\002C,");
@@ -1388,7 +1397,7 @@ HEADER(commaxt, tobody, 0, "\010COMPILE,");
 HEADER(storecf, commaxt, 0, "\003!CF");
 HEADER(commacf, storecf, 0, "\003,CF");
 HEADER(storecolon, commacf, 0, "\006!COLON");
-HEADER(commaexit, storecolon, 0, "\005,EXIT");
+HEADER(commaexit, storecolon, 0, "\005,exit");
 HEADER(commabranch, commaexit, 0, "\007,BRANCH");
 HEADER(commadest, commabranch, 0, "\005,DEST");
 HEADER(storedest, commadest, 0, "\005!DEST");
@@ -1401,7 +1410,7 @@ HEADER(twoswap, twodup, 0, "\0052SWAP");
 HEADER(twoover, twoswap, 0, "\0052OVER");
 HEADER(stod, twoover, 0, "\003S>D");
 HEADER(qnegate, stod, 0, "\007?NEGATE");
-HEADER(abs, qnegate, 0, "\003ABS");
+HEADER(abs, qnegate, 0, "\003abs");
 HEADER(dnegate, abs, 0, "\007DNEGATE");
 HEADER(qdnegate, dnegate, 0, "\010?DNEGATE");
 HEADER(dabs, qdnegate, 0, "\004DABS");
@@ -1409,22 +1418,22 @@ HEADER(mstar, dabs, 0, "\002M*");
 HEADER(smslashrem, mstar, 0, "\006SM/REM");
 HEADER(fmslashmod, smslashrem, 0, "\006FM/MOD");
 HEADER(star, fmslashmod, 0, "\001*");
-HEADER(slashmod, star, 0, "\004/MOD");
+HEADER(slashmod, star, 0, "\004/mod");
 HEADER(slash, slashmod, 0, "\001/");
-HEADER(mod, slash, 0, "\003MOD");
+HEADER(mod, slash, 0, "\003mod");
 HEADER(starslashmod, mod, 0, "\005*/MOD");
 HEADER(starslash, starslashmod, 0, "\002*/");
-HEADER(max, starslash, 0, "\003MAX");
-HEADER(min, max, 0, "\003MIN");
+HEADER(max, starslash, 0, "\003max");
+HEADER(min, max, 0, "\003min");
 HEADER(umax, min, 0, "\004UMAX");
 HEADER(umin, umax, 0, "\004UMIN");
 HEADER(cells, umin, 0, "\005CELLS");
 HEADER(count, cells, 0, "\005COUNT");
-HEADER(cr, count, 0, "\002CR");
-HEADER(space, cr, 0, "\005SPACE");
-HEADER(spaces, space, 0, "\006SPACES");
+HEADER(cr, count, 0, "\002cr");
+HEADER(space, cr, 0, "\005space");
+HEADER(spaces, space, 0, "\006spaces");
 HEADER(accept, spaces, 0, "\006ACCEPT");
-HEADER(type, accept, 0, "\004TYPE");
+HEADER(type, accept, 0, "\004type");
 HEADER(udslashmod, type, 0, "\006UD/MOD");
 HEADER(udstar, udslashmod, 0, "\003UD*");
 HEADER(hold, udstar, 0, "\004HOLD");
@@ -1434,10 +1443,10 @@ HEADER(num, todigit, 0, "\001#");
 HEADER(nums, num, 0, "\002#S");
 HEADER(numgreater, nums, 0, "\002#>");
 HEADER(sign, numgreater, 0, "\004SIGN");
-HEADER(udot, sign, 0, "\002U.");
+HEADER(udot, sign, 0, "\002u.");
 HEADER(dot, udot, 0, "\001.");
-HEADER(decimal, dot, 0, "\007DECIMAL");
-HEADER(hex, decimal, 0, "\003HEX");
+HEADER(decimal, dot, 0, "\007decimal");
+HEADER(hex, decimal, 0, "\003hex");
 HEADER(source, hex, 0, "\006SOURCE");
 HEADER(slashstring, source, 0, "\007/STRING");
 HEADER(tocounted, slashstring, 0, "\010>COUNTED");
@@ -1458,17 +1467,17 @@ HEADER(tonumber, qsign, 0, "\007>NUMBER");
 HEADER(qnumber, tonumber, 0, "\007?NUMBER");
 HEADER(interpret, qnumber, 0, "\011INTERPRET");
 HEADER(evaluate, interpret, 0, "\010EVALUATE");
-HEADER(quit, evaluate, 0, "\004QUIT");
-HEADER(abort, quit, 0, "\005ABORT");
+HEADER(quit, evaluate, 0, "\004quit");
+HEADER(abort, quit, 0, "\005abort");
 HEADER(qabort, abort, 0, "\006?ABORT");
 HEADER(abortquote, qabort, IMMEDIATE, "\006ABORT\"");
 HEADER(tick, abortquote, 0, "\001'");
-HEADER(char, tick, 0, "\004CHAR");
-HEADER(bracchar, char, IMMEDIATE, "\006[CHAR]");
+HEADER(char, tick, 0, "\004char");
+HEADER(bracchar, char, IMMEDIATE, "\006[char]");
 HEADER(paren, bracchar, IMMEDIATE, "\001(");
 HEADER(header, paren, 0, "\006HEADER");
 HEADER(builds, header, 0, "\007<BUILDS");
-HEADER(variable, builds, 0, "\010VARIABLE");
+HEADER(variable, builds, 0, "\010variable");
 HEADER(constant, variable, 0, "\010CONSTANT");
 HEADER(user, constant, 0, "\004USER");
 HEADER(create, user, 0, "\006CREATE");
@@ -1488,28 +1497,28 @@ HEADER(compile, postpone, 0, "\007COMPILE");
 HEADER(if, compile, IMMEDIATE, "\002IF");
 HEADER(then, if, IMMEDIATE, "\004THEN");
 HEADER(else, then, IMMEDIATE, "\004ELSE");
-HEADER(begin, else, IMMEDIATE, "\005BEGIN");
+HEADER(begin, else, IMMEDIATE, "\005begin");
 HEADER(until, begin, IMMEDIATE, "\005UNTIL");
-HEADER(again, until, IMMEDIATE, "\005AGAIN");
+HEADER(again, until, IMMEDIATE, "\005again");
 HEADER(while, again, IMMEDIATE, "\005WHILE");
 HEADER(repeat, while, IMMEDIATE, "\006REPEAT");
 HEADER(tol, repeat, 0, "\002>L");
 HEADER(lfrom, tol, 0, "\002L>");
-HEADER(do, lfrom, IMMEDIATE, "\002DO");
+HEADER(do, lfrom, IMMEDIATE, "\002do");
 HEADER(endloop, do, 0, "\007ENDLOOP");
-HEADER(loop, endloop, IMMEDIATE, "\004LOOP");
+HEADER(loop, endloop, IMMEDIATE, "\004loop");
 HEADER(plusloop, loop, IMMEDIATE, "\005+LOOP");
 HEADER(leave, plusloop, IMMEDIATE, "\005LEAVE");
 HEADER(within, leave, 0, "\006WITHIN");
 HEADER(move, within, 0, "\004MOVE");
-HEADER(depth, move, 0, "\005DEPTH");
+HEADER(depth, move, 0, "\005depth");
 HEADER(environmentq, depth, 0, "\014ENVIRONMENT?");
 HEADER(marker, environmentq, 0, "\006MARKER");
 
 /* for testing */
 HEADER(dothh, marker, 0, "\003.HH");
 HEADER(dothhhh, dothh, 0, "\005.HHHH");
-HEADER(dots, dothhhh, 0, "\002.S");
-HEADER(dump, dots, 0, "\004DUMP");
-HEADER(words, dump, 0, "\005WORDS");
-HEADER(cold, words, 0, "\004COLD");
+HEADER(dots, dothhhh, 0, "\002.s");
+HEADER(dump, dots, 0, "\004dump");
+HEADER(words, dump, 0, "\005words");
+HEADER(cold, words, 0, "\004cold");
