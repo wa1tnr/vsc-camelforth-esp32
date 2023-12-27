@@ -1,3 +1,10 @@
+Wed 27 Dec 19:12:51 UTC 2023
+
+  When NEWLINE is used at keyboard (press ENTER) there is one extra
+  blank line on the display terminal in vscode wokwi than expected.
+
+  slemit &c. the accept threaded word definition maybe.
+
 Mon 25 Dec 18:58:39 UTC 2023
 
   Keyboard heuristics for backspace-based correction way off
