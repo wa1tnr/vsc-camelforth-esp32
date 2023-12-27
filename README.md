@@ -1,4 +1,16 @@
-### Tue 26 Dec 22:53:28 UTC 2023
+### Tue 26 Dec 03:38:32 UTC 2023
+
+All improvements - config for wokwi web not vsc extension:
+
+  https://wokwi.com/projects/385235714680085505
+
+
+ - - -
+
+#### legacy comments follow.
+
+ - - -
+
 
 seems very good on wokwi web, worried it is borked
 for vscode, though:
@@ -11,12 +23,6 @@ light commented:
 
   It 'works' but prints the backspaces which is
   not wanted.  Not tested on vscode in 90+ minutes.
-
- - - -
-
-#### legacy comments follow.
-
- - - -
 
 add switch working in wokwi webbed:
 
