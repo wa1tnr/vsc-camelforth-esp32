@@ -1,9 +1,12 @@
-### Tue 26 Dec 03:38:32 UTC 2023
+### Tue 26 Dec 03:57:41 UTC 2023
 
 All improvements - config for wokwi web not vsc extension:
 
-  https://wokwi.com/projects/385235714680085505
+  https://wokwi.com/projects/385236933484103681
 
+  a little older (minutes):
+
+  https://wokwi.com/projects/385235714680085505
 
  - - -
 
