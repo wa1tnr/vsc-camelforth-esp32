@@ -924,15 +924,12 @@ THREAD(accept) = {Fenter, Tover, Tplus, Toneminus, Tover,
                   /* it is wokwi vscode extension */
                   Tsplemit, // vscode only
 #endif                      // #ifndef WOKWI_VSCODE
-
                   Tover, Tcstore, Toneplus, Tover, Tumin,
                   /* 4 */ Tbranch, OFFSET(-32 /*1*/),
                   /* 5 */ Tdrop, Tnip, Tswap, Tminus,
-
+#ifdef WOKWI_VSCODE
                   Tcr, /* Tscribble, */
-
-
-
+#endif // #ifdef WOKWI_VSCODE
                   Texit};
 
 THREAD(type) = {
