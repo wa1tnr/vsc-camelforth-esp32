@@ -160,10 +160,11 @@ void setup() {
   SERIAL_FORTH.print("\nspecific to ESP32");
   SERIAL_FORTH.print("    vsc-camelforth-esp32  ");
   SERIAL_FORTH.println(
-    "\n                                 Wed 27 Dec 01:41:27 UTC 2023");
+    "\n                                 Thu 28 Dec 03:20:14 UTC 2023");
   SERIAL_FORTH.println(
     "\n\n    rev f15e4d0    shred: a   branch: wokwi-ver-aa");
-  SERIAL_FORTH.println("\n\n   : nd cr dup dump cr ;  \ 3FFC2C70 next dump ");
+  SERIAL_FORTH.println("\n\n   : nd cr dump cr ;  \\ 3F400000 dump ");
+
   // kinda seems like Serial1 is correct here 24 Dec 23z
   // Note: Serial1 was correct for ESP32 not UNO R4 WiFi m likely 25 Dec 23z
   // while(-1);
