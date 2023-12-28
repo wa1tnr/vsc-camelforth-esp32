@@ -1,36 +1,48 @@
+ets Jul 29 2019 12:21:46
 
-Type [C-|] [C-h] to see available commands
-Terminal ready
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1156
+load:0x40078000,len:11456
+ho 0 tail 12 room 4
+load:0x40080400,len:2972
+entry 0x400805dc
 
-specific to Arduino Uno R4 WiFi    vsc-camelforth-uno-r4wifi  
-                                 Thu  6 Jul 21:38:05 UTC 2023
+specific to ESP32    vsc-camelforth-esp32 $
+                                                                Thu 28 Dec 03:20:14 UTC 2023
 
+    rev f15e4d0    shred: a   branch: wokwi-ver-aa
 
-    rev a0297bea   shred: a
+   : nd cr dump cr ;  \ 3F400000 dump$
 
+ yes item defined  CamelForth in C v0.1 - 14 Feb 2016
 
-   : nd CR DUP DUMP 10 + ;   200024DC next dump 
-CamelForth in C v0.1 - 14 Feb 2016
- 
-ok HEX 
-ok : nd CR DUP DUMP 10 + ;  
-ok  
-ok  200024DC 
-ok .S 
-200024dc:  200024DC
-ok 80 - 
-ok nd nd nd nd nd nd nd nd nd nd nd nd 
-2000245c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
-2000246c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
-2000247c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
-2000248c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
-2000249c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
-200024ac  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
-200024bc 10  0  0  0  a  0  0  0  1  0  0  0  3  0  0  0   ................
-200024cc  0  0  0  0 ff ff ff ff ff ff ff ff cc 24  0 20   .............$. 
-200024dc dc 24  0 20  0  0  0  0 6e 64 20 6e 64 20 6e 64   .$. ....nd nd nd
-200024ec 20 6e 64 20 6e 64 20 6e 64 20 6e 64 20 6e 64 20    nd nd nd nd nd 
-200024fc 6e 64 20 6e 64 20 6e 64 20 6e 64  0  0  0  0  0   nd nd nd nd.....
-2000250c  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0   ................
-ok
+  ok
 
+: nd cr dump cr ; hex 3F400000
+  ok
+
+400 + cr nd cr
+
+3F400400:  A0 DF FB 3F 00 01 5D 00 00 00 00 00 25 04 40 3F ...?..].....%.@?
+3F400410:  B4 DF FB 3F 01 01 5B 00 00 00 00 00 3D 04 40 3F ...?..[.....=.@?
+3F400420:  C8 DF FB 3F 01 07 72 65 63 75 72 73 65 00 00 00 ...?..recurse...
+3F400430:  00 00 00 00 51 04 40 3F E0 DF FB 3F 01 05 64 6F ....Q.@?...?..do
+3F400440:  65 73 3E 00 00 00 00 00 69 04 40 3F 00 E0 FB 3F es>.....i.@?...?
+3F400450:  00 07 28 64 6F 65 73 3E 29 00 00 00 00 00 00 00 ..(does>).......
+3F400460:  7D 04 40 3F A0 E0 FB 3F 00 06 63 72 65 61 74 65 }.@?...?..create
+3F400470:  00 00 00 00 91 04 40 3F 30 E0 FB 3F 00 04 75 73 ......@?0..?..us
+3F400480:  65 72 00 00 00 00 00 00 A9 04 40 3F 4C E0 FB 3F er........@?L..?
+3F400490:  00 08 63 6F 6E 73 74 61 6E 74 00 00 00 00 00 00 ..constant......
+3F4004A0:  C1 04 40 3F 68 E0 FB 3F 00 08 76 61 72 69 61 62 ..@?h..?..variab
+3F4004B0:  6C 65 00 00 00 00 00 00 D9 04 40 3F 94 E0 FB 3F le........@?...?
+3F4004C0:  00 07 3C 62 75 69 6C 64 73 00 00 00 00 00 00 00 ..<builds.......
+3F4004D0:  ED 04 40 3F C4 E0 FB 3F 00 06 68 65 61 64 65 72 ..@?...?..header
+3F4004E0:  00 00 00 00 FD 04 40 3F 1C E1 FB 3F 01 01 28 00 ......@?...?..(.
+3F4004F0:  00 00 00 00 11 05 40 3F 34 E1 FB 3F 01 06 5B 63 ......@?4..?..[c
+
+ ok
+
+end.
