@@ -927,7 +927,12 @@ THREAD(accept) = {Fenter, Tover, Tplus, Toneminus, Tover,
 
                   Tover, Tcstore, Toneplus, Tover, Tumin,
                   /* 4 */ Tbranch, OFFSET(-32 /*1*/),
-                  /* 5 */ Tdrop, Tnip, Tswap, Tminus, Tcr, /* Tscribble, */
+                  /* 5 */ Tdrop, Tnip, Tswap, Tminus,
+
+                  Tcr, /* Tscribble, */
+
+
+
                   Texit};
 
 THREAD(type) = {
