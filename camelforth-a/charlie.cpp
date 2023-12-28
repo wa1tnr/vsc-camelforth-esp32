@@ -9,7 +9,7 @@ extern "C" {
 /* dump 16 bytes of RAM in hex with ascii on the side */
 
 void dumpRAM() {
-    char buffer[9] = "";
+    char buffer[16] = "";
     char *ram;
     // int p = pop();
     // int p = 1; /*                 KLUDGE  FIX ME */
@@ -18,12 +18,14 @@ void dumpRAM() {
 
     ram = (char *)p;
 
-    snprintf(buffer, sizeof(buffer), "%8x", p);
+    /* 3F400100 good! 28 Dec 2023 */
+
+    snprintf(buffer, sizeof(buffer), "%8X:", p);
     Serial.print(buffer);
     Serial.print(" ");
     for (int i = 0; i < 16; i++) {
         char c = *ram++;
-        snprintf(buffer, sizeof(buffer), " %2x", (c & 0xff));
+        snprintf(buffer, sizeof(buffer), " %02X", (c & 0xff));
         Serial.print(buffer);
     }
     ram = (char *)p;
