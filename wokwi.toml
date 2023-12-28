@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'camelforth-a.ino.elf'
+elf = 'camelforth-a.ino.elf'
