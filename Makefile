@@ -1,7 +1,9 @@
 
 
-targettte:	clean
-	@./compile.sh
+# targettte:	clean compile_only
+# targettte:	clean compile_verbose
+
+targettte:	clean compile_verbose
 	@echo
 	@date
 	@echo
@@ -12,6 +14,14 @@ all:
 
 install:
 	@./upload.sh
+
+compile_verbose:
+	@echo COMPILE VERBOSE
+	@./compile_verbose.sh
+
+compile_only:
+	@echo COMPILE ONLY
+	@./compile.sh
 
 board:
 	@arduino-cli board listall
