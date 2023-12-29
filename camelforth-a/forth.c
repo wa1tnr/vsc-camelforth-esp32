@@ -1310,22 +1310,12 @@ THREAD(cold) = {
  * INNER INTERPRETER
  */
 
-void testme_was_defined() { printf(" yes item defined  "); }
+// remove these two hooks:
 
-void testme_was_NOT_defined() { printf(" NO item NOT defined  "); }
+// void testme_was_defined() { printf(" yes item defined  "); }
+// void testme_was_NOT_defined() { printf(" NO item NOT defined  "); }
 
 void interpreter(void) {
-
-  // #undef WOKWI_VSCODE
-
-#ifdef WOKWI_VSCODE
-  testme_was_defined();
-#endif
-
-#ifndef WOKWI_VSCODE
-  testme_was_NOT_defined();
-#endif
-
   void (*xt)(void *); /* pointer to code function */
   void *w, *x;        /* generic pointers */
 
