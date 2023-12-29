@@ -32,7 +32,8 @@ quiet_payload() {
 }
 
 payload() {
-    arduino-cli -v compile --fqbn esp32:esp32:esp32 \
+    arduino-cli -v compile --warnings all \
+         --fqbn esp32:esp32:esp32 \
          ${LOCAL_ACLI_DIRECTOR_Y_PROJ_ECT}
 }
 
@@ -45,12 +46,15 @@ prequel() { # pick and choose
 do_all() {
     prequel
     # quiet_payload
-    quiet_payload
     # payload
+    payload
 }
 
 do_all
 
 exit 0
+
+# --warnings string  Optional, can be: none, default, more, all.
+# Used to tell gcc which warning level to use (-W flag). (default "none")
 
 # end.
