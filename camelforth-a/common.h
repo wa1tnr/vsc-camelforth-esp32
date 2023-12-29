@@ -1,5 +1,9 @@
 #warning tried to include common.h and I hate intellisense on wokwi btw
 
+#pragma once
+
+#warning hey made it past pragma once in common.h old man!
+
 // NEED a wokwi-specific trigger
 // have one somewhere ;)
 // no you must maintain on your own atm:
@@ -7,8 +11,8 @@
 // ex.
 // https://wokwi.com/projects/361670038747009025
 
-#ifndef __COMMON_H__
-#define __COMMON_H__
+// #ifndef __COMMON_H__
+// #define __COMMON_H__
 
 // swap these two to use wokwi webbed, or wokwi vscode:
 #undef NOT_WOKWI
@@ -30,6 +34,6 @@
 #undef WOKWI_VSCODE
 #warning this is very much wokwi
 #endif
-#endif // #ifndef __COMMON_H__
+// #endif // #ifndef __COMMON_H__
 
 // end.
