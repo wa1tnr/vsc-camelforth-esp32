@@ -14,65 +14,75 @@ void this_here();
 void interpreter(void);
 extern void this_here_now();
 
+#if 0
 void print_message(char *message) {
   char buffer[32];
-  snprintf(buffer, 31, "%s", message, '\000');
+  // snprintf(buffer, 31, "%s%c", message, '\000');
+  snprintf(buffer, 31, "%s", message);
   SERIAL_FORTH.print(buffer);
 }
 
 void print_message_no_nl(char *message) {
   char buffer[32];
-  snprintf(buffer, 31, "%s", message, '\000');
+  // snprintf(buffer, 31, "%s%c", message, '\000');
+  snprintf(buffer, 31, "%s", message);
   SERIAL_FORTH.print(buffer);
 }
 
 void print_the_address(unsigned int *p) {
   char buffer[12];
-  snprintf(buffer, 11, "\n%8x:", p, '\000');
+  // snprintf(buffer, 11, "\n%8x%c:", p, '\000');
+  snprintf(buffer, 11, "\n%8x:", p);
   SERIAL_FORTH.print(buffer);
 }
 
 void print_the_addr_no_nl(unsigned int *p) {
   char buffer[12];
-  snprintf(buffer, 11, "%8x:", p, '\000');
+  // snprintf(buffer, 11, "%8x%c:", p, '\000');
+  snprintf(buffer, 11, "%8x:", p);
   SERIAL_FORTH.print(buffer);
 }
 
 void print_each_number(unsigned int *p) {
   char buffer[12];
   buffer[0] = '\000';
-  snprintf(buffer, 11, "  %8X", *p, '\000');
+  // snprintf(buffer, 11, "  %8X%c", *p, '\000');
+  snprintf(buffer, 11, "  %8X%c", *p);
   SERIAL_FORTH.print(buffer);
 }
 
 void print_dump_addr(unsigned char *p) {
   char buffer[24];
   buffer[0] = '\000';
-  snprintf(buffer, 23, "\n%8x:", p,
-           '\000'); // address at beginning of 16-byte line
+  // snprintf(buffer, 23, "\n%8x%c:", p, '\000');
+  snprintf(buffer, 23, "\n%8x:", p); // address at beginning of 16-byte line
   SERIAL_FORTH.print(buffer);
 }
 
 void print_dumped_char(unsigned char *p) {
   char buffer[24];
   buffer[0] = '\000';
-  snprintf(buffer, 23, "%c", p, '\000');
+  // snprintf(buffer, 23, "%c%c", p, '\000');
+  snprintf(buffer, 23, "%c", p);
   SERIAL_FORTH.print(buffer);
 }
 
 void print_dumped_byte(unsigned char *p) {
   char buffer[24];
   buffer[0] = '\000';
-  snprintf(buffer, 23, " %02x", *p, '\000');
+  // snprintf(buffer, 23, " %02x%c", *p, '\000');
+  snprintf(buffer, 23, " %02x", *p);
   SERIAL_FORTH.print(buffer);
 }
 
 void print_dumped_byte_no_nl(unsigned char *p) {
   char buffer[5];
   buffer[0] = '\000';
-  snprintf(buffer, 4, "%02x", *p, '\000');
+  // snprintf(buffer, 4, "%02x%c", *p, '\000');
+  snprintf(buffer, 4, "%02x", *p);
   SERIAL_FORTH.print(buffer);
 }
+#endif
 
 /*
   sample run - DUMP word  - line count on TOS
@@ -84,17 +94,32 @@ void print_dumped_byte_no_nl(unsigned char *p) {
 
 char getch(void) {
   bool waiting_ch = 0;
+
   // for (int testing = 5; testing > 0; testing--) { ; }
+
   while (!waiting_ch) {
     bool waiting_now = SERIAL_FORTH.available();
     waiting_ch = waiting_now;
   }
+
+  // waiting_ch now assigned
+
   if (waiting_ch) {
     unsigned int ch = SERIAL_FORTH.read();
     // SERIAL_FORTH.println("DID SEE THIS LINE 101");
     SERIAL_FORTH.write(ch);
     return (unsigned int)ch;
   }
+
+  if (!waiting_ch) {
+    SERIAL_FORTH.println(" TRAP LINE 114");
+    while(-1);
+  }
+  /* TODO: fixme - zero clue so faking it: */
+  char pch='\0';
+  return (unsigned int)pch;
+
+  // TODO: suss - nothing reaches here - compiler says control reaches end of non-void function.
 }
 
 void putch(unsigned int c) {
@@ -163,6 +188,8 @@ void setup() {
     "\n                                 Thu 28 Dec 03:20:14 UTC 2023");
   SERIAL_FORTH.println(
     "\n\n    rev f15e4d0    shred: a   branch: wokwi-ver-aa");
+  SERIAL_FORTH.println(
+    "\n\n    charlie.cpp has the pop() 20:22z 28 Dec 2023");
   SERIAL_FORTH.println("\n\n   : nd cr dump cr ;  \\ 3F400000 dump ");
 
   // kinda seems like Serial1 is correct here 24 Dec 23z

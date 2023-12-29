@@ -542,9 +542,10 @@ CODE(sequal) { /* c-addr1 c-addr2 u -- n */
 
 /* TERMINAL I/O */
 
-CODE(key) { *--psp = (unsigned int)getch(); }
-
 extern void putch(char c);
+extern char getch(void); // Fri 29 Dec 00:31:31
+
+CODE(key) { *--psp = (unsigned int)getch(); }
 
 /*
 CODE(emit) {
@@ -571,6 +572,8 @@ CODE(emit) {
   printf("%c", *psp++);
   // putch((char)*psp++);
 }
+
+extern int getquery(void);
 
 CODE(keyq) { *--psp = getquery(); }
 
