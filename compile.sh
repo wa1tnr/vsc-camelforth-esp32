@@ -26,8 +26,13 @@ prequel_c() {
 _EOF
 }
 
+quiet_payload() {
+    arduino-cli    compile --fqbn esp32:esp32:esp32 \
+         ${LOCAL_ACLI_DIRECTOR_Y_PROJ_ECT}
+}
+
 payload() {
-    arduino-cli compile --fqbn esp32:esp32:esp32 \
+    arduino-cli -v compile --fqbn esp32:esp32:esp32 \
          ${LOCAL_ACLI_DIRECTOR_Y_PROJ_ECT}
 }
 
@@ -37,7 +42,14 @@ prequel() { # pick and choose
     # prequel_c
 }
 
-prequel ; payload
+do_all() {
+    prequel
+    # quiet_payload
+    quiet_payload
+    # payload
+}
+
+do_all
 
 exit 0
 
