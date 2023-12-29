@@ -8,14 +8,15 @@ extern "C" {
 
 /* dump 16 bytes of RAM in hex with ascii on the side */
 
+int pop() {
+    int p = psp[0]; psp++;
+    return p;
+}
+
 void dumpRAM() {
     char buffer[16] = "";
     char *ram;
-    // int p = pop();
-    // int p = 1; /*                 KLUDGE  FIX ME */
-
-    int p = psp[0]; psp++;
-
+    int p = pop();
     ram = (char *)p;
 
     /* 3F400100 good! 28 Dec 2023 */
