@@ -1,0 +1,37 @@
+Thu 21 Mar 17:39:57 UTC 2024
+
+ $  pwd
+/tmp/arduino
+
+ $  ls -la
+total 36
+drwxr-xr-x   4 abcdef abcdef  4096 Mar 21 17:32 .
+drwxrwxrwt 187 root  root  20480 Mar 21 17:32 ..
+drwxr-xr-x   3 abcdef abcdef  4096 Mar 21 17:32 cores
+lrwxrwxrwx   1 abcdef abcdef    42 Mar 21 17:27 CURRENT.d -> sketches/DBC95F3CC85503421E585A5A53F5DCCA/
+drwxr-xr-x   3 abcdef abcdef  4096 Mar 21 17:32 sketches
+
+the link 'CURRENT.d' is maintained in two places (two
+instances, spelling is the same but do not have to be).
+
+ $ pwd
+ /some/path/to/vsc-camelforth-esp32
+
+ $ ls -la | ag CURR
+lrwxrwxrwx   1 abcdef abcdef    22 Mar 21 17:28 CURRENT.d -> /tmp/arduino/CURRENT.d
+
+so, locally (in ./vsc-camelforth-esp32) there is a link that simply
+points to the other link (found in /tmp/arduino).
+
+The one in /tmp/arduino points to a very long directory name,
+under /tmp/arduino/sketches.  This name may change; but in common
+use the name won't change even between vscode sessions.
+
+Which is convenient. ;)
+
+Otherwise it'd have to be maintained fairly often - or some
+other scheme employed to get to the same goal (convenient
+means to point to the compiled binary .bin and .elf files,
+in wokwi.toml).
+
+end.
