@@ -1,4 +1,5 @@
 [wokwi]
 version = 1
-firmware = 'camelforth-a.ino.elf'
-elf = 'camelforth-a.ino.elf'
+gdbServerPort = 3333
+firmware = "CURRENT.d/camelforth-a.ino.bin"
+elf = "CURRENT.d/camelforth-a.ino.elf"

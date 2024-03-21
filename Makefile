@@ -7,8 +7,10 @@ targettte:	clean compile_verbose
 	@echo
 	@date
 	@echo
-	@sha1sum ./camelforth-a.ino.bin
+	@sha1sum ./CURRENT.d/camelforth-a.ino.bin
 	@echo
+
+	# @sha1sum ./camelforth-a.ino.bin
 
 all:
 
