@@ -32,6 +32,6 @@ comm:
 	./cf-fastpico9t-esp32-vsc.sh /dev/ttyACM0
 
 clean:
-	rm -rf /tmp/arduino/cores ; rm -rf /tmp/arduino/sketches
+	rm -rf ${HOME}/.cache/arduino/sketches/AAAAAAAAAAAAAAAAAAABBBBBBBBBCDE2
 
 # end.
