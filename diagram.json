@@ -39,5 +39,7 @@
     [ "esp:15", "bb1:32t.a", "yellow", [ "v-4.7", "h48.24" ] ],
     [ "bb1:32t.e", "bb1:35t.e", "yellow", [ "v9.6", "h28.8" ] ]
   ],
+  "connections": [ [ "esp:TX", "$serialMonitor:RX", "", [] ], [ "esp:RX", "$serialMonitor:TX", "", [] ] ],
+  "serialMonitor": { "display": "terminal", "newline": "lf" },
   "dependencies": {}
 }
