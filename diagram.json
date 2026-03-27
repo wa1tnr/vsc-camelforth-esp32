@@ -19,6 +19,13 @@
       "left": 306.65,
       "rotate": 90,
       "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text1",
+      "top": -172.8,
+      "left": 220.8,
+      "attrs": { "text": "text aaa" }
     }
   ],
   "connections": [
@@ -34,12 +41,11 @@
     [ "esp:D15", "bb1:35t.c", "green", [ "h28.82", "v126.94", "h33.58", "v30.78", "h15.86" ] ],
     [ "esp:GND.2", "bb1:tn.12", "black", [ "h-28.31", "v115.11", "h20.05" ] ],
     [ "bb1:tn.50", "bb1:bn.50", "green", [ "v-3.54", "h61.23", "v173.08", "h-56.86" ] ],
-    [ "r1:1", "bb1:44t.e", "", [ "$bb" ] ],
-    [ "r1:2", "bb1:44b.i", "", [ "$bb" ] ],
     [ "esp:15", "bb1:32t.a", "yellow", [ "v-4.7", "h48.24" ] ],
-    [ "bb1:32t.e", "bb1:35t.e", "yellow", [ "v9.6", "h28.8" ] ]
+    [ "bb1:32t.e", "bb1:35t.e", "yellow", [ "v9.6", "h28.8" ] ],
+    [ "r1:1", "bb1:44t.e", "", [ "$bb" ] ],
+    [ "r1:2", "bb1:44b.i", "", [ "$bb" ] ]
   ],
-  "connections": [ [ "esp:TX", "$serialMonitor:RX", "", [] ], [ "esp:RX", "$serialMonitor:TX", "", [] ] ],
   "serialMonitor": { "display": "terminal", "newline": "lf" },
   "dependencies": {}
 }
